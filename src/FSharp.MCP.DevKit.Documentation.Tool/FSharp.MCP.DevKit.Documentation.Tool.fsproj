@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+
+    <!-- dotnet tool configuration -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>fsharp-docgen</ToolCommandName>
+
+    <!-- NuGet Package Information -->
+    <PackageId>FSharp.MCP.DevKit.Documentation.Tool</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <PackageDescription>F# MCP DevKit Documentation Generator - Command-line tool for generating API documentation from NuGet packages and F# projects</PackageDescription>
+    <PackageAuthors>FSharp.MCP.DevKit</PackageAuthors>
+    <PackageTags>fsharp;documentation;nuget;api;mcp;devkit;tool;dotnet-tool</PackageTags>
+    <PackageProjectUrl>https://github.com/ehotw/FSharp.MCP.DevKit</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/ehotw/FSharp.MCP.DevKit</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- Tool-specific settings -->
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FSharp.MCP.DevKit.Documentation\FSharp.MCP.DevKit.Documentation.fsproj" />
+  </ItemGroup>
+
+</Project>

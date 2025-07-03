@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "Ionide.Ionide-fsharp",
+    "ms-dotnettools.csharp",
+    "ms-vscode.powershell",
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml",
+    "GitHub.copilot"
+  ]
+}

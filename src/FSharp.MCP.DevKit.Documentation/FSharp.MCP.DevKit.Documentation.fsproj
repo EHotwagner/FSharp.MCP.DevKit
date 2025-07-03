@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- NuGet Package Information -->
+    <PackageId>FSharp.MCP.DevKit.Documentation</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <PackageDescription>F# MCP DevKit Documentation Generator - Comprehensive API documentation generation for .NET assemblies and NuGet packages</PackageDescription>
+    <PackageAuthors>FSharp.MCP.DevKit</PackageAuthors>
+    <PackageTags>fsharp;documentation;nuget;api;mcp;devkit</PackageTags>
+    <PackageProjectUrl>https://github.com/ehotw/FSharp.MCP.DevKit</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/ehotw/FSharp.MCP.DevKit</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- Enable NuGet package generation -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Model\DocumentationModel.fs" />
+    <Compile Include="NuGet\XmlDocumentationParser.fs" />
+    <Compile Include="NuGet\AssemblyAnalyzer.fs" />
+    <Compile Include="NuGet\PackageDownloader.fs" />
+    <Compile Include="Core\PackageDocService.fs" />
+    <Compile Include="Tools\DocGenerator.fs" />
+    <Compile Include="Tools\ProjectAnalyzer.fs" />
+    <Compile Include="Tools\DocumentationCommands.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NuGet.Protocol" Version="6.11.1" />
+    <PackageReference Include="NuGet.Packaging" Version="6.11.1" />
+    <PackageReference Include="NuGet.Configuration" Version="6.11.1" />
+    <PackageReference Include="NuGet.Resolver" Version="6.11.1" />
+    <PackageReference Include="NuGet.Frameworks" Version="6.11.1" />
+    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FSharp.MCP.DevKit.Core\FSharp.MCP.DevKit.Core.fsproj" />
+  </ItemGroup>
+
+</Project>

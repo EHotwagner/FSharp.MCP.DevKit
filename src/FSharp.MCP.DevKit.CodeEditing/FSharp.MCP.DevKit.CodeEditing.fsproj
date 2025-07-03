@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>FSharp.MCP.DevKit.CodeEditing</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <Compile Include="FSharpCodeEditing.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FSharp.MCP.DevKit.Core\FSharp.MCP.DevKit.Core.fsproj" />
+    <ProjectReference Include="..\FSharp.MCP.DevKit.Analysis\FSharp.MCP.DevKit.Analysis.fsproj" />
+    <ProjectReference Include="..\FSharp.MCP.DevKit.Communication\FSharp.MCP.DevKit.Communication.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fantomas.Core" Version="7.0.2" />
+    <PackageReference Include="ModelContextProtocol" Version="0.3.0-preview.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>
