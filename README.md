@@ -311,6 +311,7 @@ Comprehensive documentation organized by project:
 ### 📋 General Documentation
 - **[🏗️ Architecture](docs/Architecture.md)** - System design and architecture
 - **[✨ Features](docs/Features.md)** - Detailed feature documentation
+- **[🎯 Terminal Code Execution](docs/Terminal-Code-Execution.md)** - Multi-terminal F# execution and session targeting
 - **[📝 Design & Analysis](docs/DESIGN_AND_ANALYSIS.md)** - Design decisions and analysis
 - **[📋 Implementation Summary](docs/Implementation-Summary.md)** - Implementation details
 - **[🗂️ Plans & Specifications](docs/plans/)** - Development roadmaps
