@@ -91,7 +91,7 @@ graph TB
         Assistant["`**AI Assistant**
         (Claude, GPT, etc.)
         • F# Development Support
-        • Code Generation  
+        • Code Generation
         • Interactive Analysis`"]
     end
     
@@ -115,6 +115,9 @@ graph TB
         • API Reference Generation  
         • Smart Search & Discovery`"]
         
+        DocumentationTool["`**🔧 Documentation Tool**
+        • CLI for Doc Generation`"]
+
         CodeEditing["`**✏️ Code Editing**
         • Safe Code Insertion
         • Fantomas Integration
@@ -161,6 +164,7 @@ graph TB
     Server --> Communication
     Server --> Analysis
     Documentation --> Core
+    DocumentationTool --> Documentation
     CodeEditing --> Core
     Communication --> Core
     Analysis --> Core
@@ -183,7 +187,7 @@ graph TB
     class Assistant aiLayer
     class MCPServer mcpLayer
     class Server appLayer
-    class Documentation,CodeEditing,Communication,Analysis serviceLayer
+    class Documentation,CodeEditing,Communication,Analysis,DocumentationTool serviceLayer
     class Core foundationLayer
     class FCS,Fantomas,FSI externalDep
 ```
