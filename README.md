@@ -234,7 +234,7 @@ The server provides **30+ specialized MCP tools** organized into categories:
 - `ParseSourceToAST` - Parse code to Abstract Syntax Tree
 
 ### 🛠️ Utility & Management
-- `KillAll` - Kill all MCP server processes for clean restarts
+- `KillAll` - Kill all MCP server processes for clean restarts (temporary till FAKE integration)
 
 ## 🚀 Usage Examples
 
