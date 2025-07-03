@@ -311,37 +311,12 @@ Comprehensive documentation organized by project:
 - **[📋 Implementation Summary](docs/Implementation-Summary.md)** - Implementation details
 - **[🗂️ Plans & Specifications](docs/plans/)** - Development roadmaps
 
-## 🔧 Configuration
-
-The server uses `appsettings.json` for configuration:
-
-```json
-{
-  "FsiConfig": {
-    "FsiPath": "dotnet fsi",
-    "StartupScript": null,
-    "WorkingDirectory": "."
-  },
-  "PipeConfig": {
-    "PipeName": "fsi-mcp-pipe",
-    "MaxConcurrentConnections": 10,
-    "ReceiveTimeout": 30000
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information"
-    }
-  }
-}
-```
-
 
 ## �️ Development Roadmap
 
 ### 🎯 Near-term Enhancements 
 **🔄 Currently In Progress:**
-- 📚 **Cross-reference linking** - Automatic linking between types in documentation
-- 🔍 **Advanced pattern analysis** - Better detection of F# patterns and idioms
+- 📚 **Cross-reference linking** - Automatic linking between types in documentation (maybe https://marketplace.visualstudio.com/items?itemName=foam.foam-vscode )
 - **Fake Integration**
 - **Planning Tools** - Adding some deterministic planning tools and Knowledge bases to help the AI agent generate more structured code.
 - **Increase performance and robustness of text, file handling and code insertion.**
