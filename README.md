@@ -5,7 +5,7 @@
 [![MCP](https://img.shields.io/badge/MCP-Compatible-00AA88?style=flat-square)](https://modelcontextprotocol.io/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-Working Prototype of a F# development toolkit delivered through the **Model Context Protocol (MCP)**, providing F# Interactive (FSI) capabilities with advanced code documentation, insertion, and analysis tools for AI assistants.
+A prototype of an F# development toolkit delivered via the **Model Context Protocol (MCP)**. It provides F# Interactive (FSI) capabilities, code documentation, safe code manipulation, and analysis tools with language server features. Integration with the FAKE build system is under development.
 
 ## ⚠️ Disclaimer (by EHotwagner)
 
