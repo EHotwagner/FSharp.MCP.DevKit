@@ -291,27 +291,6 @@ The toolkit supports multiple development philosophies, each optimized for diffe
 - **[🛠️ Copilot Instructions](docs/Agent-Instructions-Strategies/REPL-Driven-Default/copilot-instructions.md)** - Agent guidance for interactive REPL workflows
 - **Key Characteristics**: Immediate feedback, live debugging, exploratory programming, state preservation
 
-### 🎯 Choosing the Right Strategy
-
-| Scenario | Script-Driven | REPL-Driven |
-|----------|---------------|-------------|
-| **Agent-Driven Development** | ✅ Excellent - Structured feedback | ⚠️ Requires session management |
-| **Complex System Validation** | ✅ Comprehensive automation | ❌ Manual validation required |
-| **Rapid Prototyping** | ⚠️ Structured approach | ✅ Natural exploration |
-| **Production Workflows** | ✅ Fully reproducible | ❌ Session-dependent |
-| **Interactive Debugging** | ❌ Edit and re-run | ✅ Live state inspection |
-| **Documentation Generation** | ✅ Explicit artifacts | ⚠️ Emergent through use |
-
-### 🔧 Implementation Support
-
-Both strategies are fully supported by the FSharp.MCP.DevKit with:
-- **Comprehensive MCP Tools** - 30+ specialized tools for both approaches
-- **Standard Tooling Integration** - Works with `dotnet fsi`, Paket, and standard F# tooling
-- **Hosted Execution Fallback** - MCP-based execution when standard environments unavailable
-- **Structured Output** - Parseable feedback for automated decision making
-- **Error Handling** - Robust error recovery and analysis capabilities
-
-
 ## 📖 Documentation
 
 ### 📂 Project Documentation
