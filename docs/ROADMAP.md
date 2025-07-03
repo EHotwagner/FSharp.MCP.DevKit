@@ -27,28 +27,6 @@ Enhanced documentation capabilities:
 - 🔄 Cross-reference linking between types
 - 📋 Package dependency visualization
 
-### v1.2.0 - Advanced F# Features
-**Target:** Q3 2025
-**Status:** 📋 Planned
-
-Advanced F# language support:
-- 📋 Computation expression analysis
-- 📋 Type provider support
-- 📋 Advanced pattern matching detection
-- 📋 F# script project analysis
-- 📋 Interactive debugging tools
-
-### v2.0.0 - IDE Integration
-**Target:** Q4 2025
-**Status:** 📋 Future
-
-Full IDE integration:
-- 📋 VS Code extension
-- 📋 Real-time syntax highlighting
-- 📋 IntelliSense integration
-- 📋 Refactoring tools
-- 📋 Live documentation preview
-
 ## Known Issues
 
 See [ISSUES.md](./ISSUES.md) for current known issues and their status.

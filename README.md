@@ -355,7 +355,6 @@ The server uses `appsettings.json` for configuration:
 
 
 For current development status and known issues, see:
-- 🗺️ **[Development Roadmap](docs/ROADMAP.md)** - Future milestones and planned features
 - 🐛 **[Known Issues](docs/ISSUES.md)** - Current bugs and limitations
 
 ## � Communication & Contact
