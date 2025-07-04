@@ -5,11 +5,12 @@
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>FSharp.MCP.DevKit.Server</RootNamespace>
     <AssemblyName>FSharp.MCP.DevKit</AssemblyName>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>fsharp-mcp-server</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="McpFsiTools.fs" />
-    <Compile Include="McpDocumentationTools.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
