@@ -15,7 +15,11 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 - **Code Verification**: The entire codebase and its documentation have not been manually verified for correctness or completeness. However, the core features described should be functional (as in I have seen them work at least once).
 - **Agent Stability**: The AI agent's instructions are generally initially effective, but after it deviates, restarting the agent to reset its context is recommended.
 - **DevEnvironment**: This project has been developed in VSCode with GH Copilot, mostly using Claude Sonnet 4 and a bit of Gemini 2.5 Pro for planning and design.
-- **Design**: Documentation is written somewhat with REPL-driven development in mind, allowing for interactive code generation and testing. I am currently tending towards a more script-driven development approach, which allows for structured experimentation and reproducible testing. REPL works with hosted FSI sessions, which in this context are not easy to configure, a bit fragile with some Input, have no nice output (only MCP-Tools output terminal and agent chat window). Letting the agent start a standard fsi process in an agent observed terminal is ofcourse possible but cumbersome in VSCode since terminal actions need approval. This project should be neutral to the chosen approach in the future. VsCode Insiders has https://github.com/microsoft/vscode/issues/253103 which changes the ergonomics a lot. Needs considerations. 
+- **Design**: Documentation is written somewhat with REPL-driven development in mind, allowing for interactive code generation and testing. I am currently tending towards a more script-driven development approach, which allows for structured experimentation and reproducible testing. A new, more rigorous approach, **Signature-Driven Development**, is also being considered.
+  - [REPL-Driven Development](./docs/Agent-Instructions-Strategies/REPL-Driven-Default/Design.md)
+  - [Script-Driven Development](./docs/Agent-Instructions-Strategies/Script-Driven-Default/Design.md)
+  - [Signature-Driven Development](./docs/Agent-Instructions-Strategies/Signature-Driven-Default/Design.md)
+REPL works with hosted FSI sessions, which in this context are not easy to configure, a bit fragile with some Input, have no nice output (only MCP-Tools output terminal and agent chat window). Letting the agent start a standard fsi process in an agent observed terminal is ofcourse possible but cumbersome in VSCode since terminal actions need approval. This project should be neutral to the chosen approach in the future. VsCode Insiders has https://github.com/microsoft/vscode/issues/253103 which changes the ergonomics a lot. Needs consideration. 
 - **Get Started**: There are no releases yet. For VSCode use this https://devblogs.microsoft.com/dotnet/build-a-model-context-protocol-mcp-server-in-csharp/ approach. Add the project to the mcp.json file. Later a dotnet tool might be the best way to distribute this project. 
 
 ## ✨ Key Features
@@ -294,6 +298,12 @@ The toolkit supports multiple development philosophies, each optimized for diffe
 - **[📖 Design Philosophy](docs/Agent-Instructions-Strategies/REPL-Driven-Default/Design.md)** - Deep dive into REPL-based development patterns
 - **[🛠️ Copilot Instructions](docs/Agent-Instructions-Strategies/REPL-Driven-Default/copilot-instructions.md)** - Agent guidance for interactive REPL workflows
 - **Key Characteristics**: Immediate feedback, live debugging, exploratory programming, state preservation
+
+#### 📜 [Signature-Driven Development](docs/Agent-Instructions-Strategies/Signature-Driven-Default/)
+**Recommended for: Contract-first development, rigorous validation, clear interfaces**
+- **[📖 Design Philosophy](docs/Agent-Instructions-Strategies/Signature-Driven-Default/Design.md)** - In-depth exploration of signature-driven development principles
+- **[🛠️ Copilot Instructions](docs/Agent-Instructions-Strategies/Signature-Driven-Default/copilot-instructions.md)** - Instructions for implementing signature-driven workflows
+- **Key Characteristics**: Explicit contracts, enhanced validation, clear module boundaries, improved collaboration
 
 ## 📖 Documentation
 
