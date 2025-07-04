@@ -11,6 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="McpFsiTools.fs" />
+    <Compile Include="McpDocumentationTools.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

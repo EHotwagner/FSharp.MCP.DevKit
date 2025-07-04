@@ -1,11 +1,11 @@
-﻿module MCP_Scripting.Program
+﻿module FSharp.MCP.DevKit.Server.Program
 
 open System
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open ModelContextProtocol.Server
-open FSharp.MCP.DevKit.Server
+open FSharp.MCP.DevKit.Server.McpFsiTools
 
 [<EntryPoint>]
 let main argv =
@@ -16,7 +16,7 @@ let main argv =
     |> ignore
 
     // Register FSI service
-    builder.Services.AddSingleton<McpFsiTools.FsiMcpService>() |> ignore
+    builder.Services.AddSingleton<FsiMcpService>() |> ignore
 
     // Configure MCP server
     builder.Services.AddMcpServer().WithStdioServerTransport().WithToolsFromAssembly()
