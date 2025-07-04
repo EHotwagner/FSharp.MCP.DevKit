@@ -20,11 +20,6 @@ This project has been developed with significant reliance on AI-driven tools. Wh
   - [Script-Driven Development](./docs/Agent-Instructions-Strategies/Script-Driven-Default/Design.md)
   - [Signature-Driven Development](./docs/Agent-Instructions-Strategies/Signature-Driven-Default/Design.md)
 
-REPL works with hosted FSI sessions, which in this context are not easy to configure, a bit fragile with some Input, have no nice output (only MCP-Tools output terminal and agent chat window). Letting the agent start a standard fsi process in an agent observed terminal is of course possible but cumbersome in VSCode since terminal actions need approval. This project should be neutral to the chosen approach in the future. VsCode Insiders has https://github.com/microsoft/vscode/issues/253103 which changes the ergonomics a lot. Needs consideration. 
-- **Design**: Documentation is written somewhat with REPL-driven development in mind, allowing for interactive code generation and testing. I am currently tending towards a more script-driven development approach, which allows for structured experimentation and reproducible testing. A new, more rigorous approach, **Signature-Driven Development**, is also being considered.
-  - [REPL-Driven Development](./docs/Agent-Instructions-Strategies/REPL-Driven-Default/Design.md)
-  - [Script-Driven Development](./docs/Agent-Instructions-Strategies/Script-Driven-Default/Design.md)
-  - [Signature-Driven Development](./docs/Agent-Instructions-Strategies/Signature-Driven-Default/Design.md)
 
 REPL works with hosted FSI sessions, which in this context are not easy to configure, a bit fragile with some Input, have no nice output (only MCP-Tools output terminal and agent chat window). Letting the agent start a standard fsi process in an agent observed terminal is of course possible but cumbersome in VSCode since terminal actions need approval. This project should be neutral to the chosen approach in the future. VsCode Insiders has https://github.com/microsoft/vscode/issues/253103 which changes the ergonomics a lot. Needs consideration. 
 - **Get Started**: There are no releases yet. For VSCode use this https://devblogs.microsoft.com/dotnet/build-a-model-context-protocol-mcp-server-in-csharp/ approach. Add the project to the mcp.json file. Later a dotnet tool might be the best way to distribute this project. 
