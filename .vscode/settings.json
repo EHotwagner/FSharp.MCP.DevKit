@@ -7,21 +7,17 @@
     "**/bin/**": true,
     "**/obj/**": true
   },
-
   // Auto-save to keep files in sync
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
-
   // File refresh settings
   "files.refactoring.autoSave": true,
   "files.hotExit": "onExitAndWindowClose",
-
   // F# specific settings
   "FSharp.enableAnalyzers": true,
   "FSharp.codeLenses.references.enabled": true,
   "FSharp.enableTreeView": true,
   "FSharp.showExplorerOnStartup": true,
-
   // FSI settings
   "FSharp.fsiExtraSharedParameters": [
     "--utf8output",
@@ -30,41 +26,41 @@
   "FSharp.fsiSdkFilePath": "",
   "FSharp.dotNetRoot": "",
   "mcp.fsharp.fsi.project": "${workspaceFolder}/src/MCP.Scripting.Server/MCP.Scripting.Server.fsproj",
-
   // Editor settings for better sync
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
-
   // Terminal settings
   "terminal.integrated.enablePersistentSessions": true,
   "terminal.integrated.persistentSessionReviveProcess": "onExit",
-
   // File associations
   "files.associations": {
     "*.fsx": "fsharp",
     "*.fs": "fsharp",
     "*.fsi": "fsharp"
   },
-
   // Disable problematic features that can cause sync issues
   "typescript.suggest.autoImports": false,
   "javascript.suggest.autoImports": false,
-
   // Better error reporting
   "problems.showCurrentInStatus": true,
   "problems.sortOrder": "severity",
-
   // Git settings to avoid conflicts
   "git.autofetch": false,
   "git.confirmSync": false,
-
   // Performance settings
   "search.followSymlinks": false,
   "files.exclude": {
     "**/bin": true,
     "**/obj": true,
     "**/.vs": true
-  }
+  },
+  // GitHub Copilot instruction settings
+  "chat.promptFiles": true,
+  "github.copilot.chat.instructions": [
+    "Always consider F# functional programming principles",
+    "Provide clear explanations for design decisions",
+    "Follow the project's established patterns and conventions"
+  ]
 }
