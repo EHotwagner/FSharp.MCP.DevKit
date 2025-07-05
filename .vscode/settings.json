@@ -25,7 +25,6 @@
   ],
   "FSharp.fsiSdkFilePath": "",
   "FSharp.dotNetRoot": "",
-  "mcp.fsharp.fsi.project": "${workspaceFolder}/src/MCP.Scripting.Server/MCP.Scripting.Server.fsproj",
   // Editor settings for better sync
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
