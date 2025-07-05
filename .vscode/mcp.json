@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "fsharpDevKit": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "src/FSharp.MCP.DevKit.Server/FSharp.MCP.DevKit.Server.fsproj"
+      ],
+      "cwd": "c:\\Users\\ehotw\\Documents\\GitHub\\FSharp.MCP.DevKit"
+    }
+  }
+}
