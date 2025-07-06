@@ -28,7 +28,7 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 
 ## ✨ Features
 
-### 🔧 F# Interactive Integration
+### 🔧 [F# Interactive Integration](docs/projects/Core/)
 
 - **Projects**: [`FSharp.MCP.DevKit.Core`](./src/FSharp.MCP.DevKit.Core/), [`FSharp.MCP.DevKit.Communication`](./src/FSharp.MCP.DevKit.Communication/)
 - **💾 Persistent FSI Session**: Stateful F# Interactive session management with cross-session state preservation
@@ -51,7 +51,7 @@ This project has been developed with significant reliance on AI-driven tools. Wh
   - *How it works*: Uses #r directives for assemblies, NuGet package resolution via FSI's built-in package manager
   - *MCP Tools*: `ReferenceAssembly`, `ReferenceNuGetPackage`
 
-### 📚 Documentation Generation & Search
+### 📚 [Documentation Generation & Search](docs/projects/Documentation/)
 
 - **Projects**: [`FSharp.MCP.DevKit.Documentation`](./src/FSharp.MCP.DevKit.Documentation/), [`FSharp.MCP.DevKit.Documentation.Tool`](./src/FSharp.MCP.DevKit.Documentation.Tool/)
 - **📦 Package Documentation**: Generate comprehensive API docs for NuGet packages with cross-reference linking
@@ -79,7 +79,7 @@ This project has been developed with significant reliance on AI-driven tools. Wh
   - *How it works*: Scans local NuGet cache directories, extracts package metadata, provides searchable package listings
   - *MCP Tools*: `ListCachedPackages`, `SetDocumentationOutputDirectory`, `ShowDocumentationConfig`
 
-### ✏️ Safe Code Manipulation
+### ✏️ [Safe Code Manipulation](docs/projects/CodeEditing/)
 
 - **Project**: [`FSharp.MCP.DevKit.CodeEditing`](./src/FSharp.MCP.DevKit.CodeEditing/)
 - **🛡️ Safe Code Insertion**: Insert F# code with AST validation and type checking to prevent syntax corruption
@@ -107,7 +107,7 @@ This project has been developed with significant reliance on AI-driven tools. Wh
   - *How it works*: Creates temporary files, performs operations atomically, provides rollback on failure
   - *Features*: Transaction-like semantics, automatic backup creation, error recovery
 
-### 🧠 Advanced Analysis Tools
+### 🧠 [Advanced Analysis Tools](docs/projects/Analysis/)
 
 - **Project**: [`FSharp.MCP.DevKit.Analysis`](./src/FSharp.MCP.DevKit.Analysis/)
 - **🔍 Symbol Detection**: Advanced symbol detection and resolution
@@ -198,75 +198,15 @@ The toolkit supports multiple development philosophies, each optimized for diffe
 - **[🛠️ Copilot Instructions](docs/Agent-Instructions-Strategies/Signature-Driven-Default/copilot-instructions.md)** - Instructions for implementing signature-driven workflows
 - **Key Characteristics**: Explicit contracts, enhanced validation, clear module boundaries, improved collaboration
 
-## 📖 Documentation
+## 🏗️ Architecture
 
-### 📂 Project Documentation
+The FSharp.MCP.DevKit follows a **modular, layered architecture** with clear separation of concerns:
 
-Comprehensive documentation organized by project:
-
-- **[📚 All Projects Documentation](docs/projects/)** - Complete documentation index
-- **[🔧 Core](docs/projects/Core/)** - Foundation layer documentation
-- **[🔍 Analysis](docs/projects/Analysis/)** - Code analysis and intelligence
-- **[📡 Communication](docs/projects/Communication/)** - IPC infrastructure
-- **[✏️ CodeEditing](docs/projects/CodeEditing/)** - Code manipulation capabilities
-- **[🌐 Server](docs/projects/Server/)** - MCP server implementation
-- **[📚 Documentation](docs/projects/Documentation/)** - Documentation generation
-
-### 📋 General Documentation
-
-- **[🏗️ Architecture](docs/Architecture.md)** - System design and architecture
-- **[✨ Features](docs/Features.md)** - Detailed feature documentation
-- **[🎯 Terminal Code Execution](docs/Terminal-Code-Execution.md)** - Proposal for multi-terminal F# execution and session targeting
-- **[🗂️ Plans & Specifications](docs/plans/)** - Development roadmaps
-
-## �️ Development Roadmap
-
-### 🎯 Near-term Enhancements
-
-**🔄 Currently In Progress:**
-
-- 📚 **Cross-reference linking** - Automatic linking between types in documentation (maybe <https://marketplace.visualstudio.com/items?itemName=foam.foam-vscode> )
-- **Fake Integration**
-- **Planning Tools** - Adding some deterministic planning tools and Knowledge bases to help the AI agent generate more structured code.
-- **Increase performance and robustness of text, file handling and code insertion.**
-
-## �🔗 Key Technologies
-
-- **[F# Compiler Services](https://fsharp.github.io/fsharp-compiler-docs/)** - F# language analysis and compilation
-- **[Fantomas](https://github.com/fsprojects/fantomas)** - F# code formatting
-- **[Model Context Protocol](https://modelcontextprotocol.io/)** - AI assistant integration protocol
-- **Named Pipes** - High-performance inter-process communication
-- **.NET 9.0** - Modern .NET runtime and libraries
-
-For current development status and known issues, see:
-
-- 🐛 **[Known Issues](docs/ISSUES.md)** - Current bugs and limitations
-
-## � Communication & Contact
-
-We welcome your feedback, questions, and contributions! Here's how to get in touch:
-
-### 🎮 Discord Community
-
-Join the F# community discussions:
-
-- **[F# Discord - #tools-and-libraries](https://discord.com/channels/196693847965696000/524660202864377896)** - Get help, share ideas, and discuss F# tooling
-
-### 🐛 Issues & Bug Reports
-
-Found a bug or have a feature request?
-
-- **[GitHub Issues](https://github.com/ehotw/FSharp.MCP.DevKit/issues)** - Report bugs, request features, or ask questions
-
-## �📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🔗 Resources
-
-- **[Build a Model Context Protocol Server in C#](https://devblogs.microsoft.com/dotnet/build-a-model-context-protocol-mcp-server-in-csharp/)** - Microsoft DevBlogs guide
-- **[Model Context Protocol Documentation](https://modelcontextprotocol.io/)** - Official MCP documentation
-- **[F# Documentation](https://docs.microsoft.com/en-us/dotnet/fsharp/)** - Official F# documentation
+- **Core Layer**: Fundamental building blocks and services
+- **Communication Layer**: Inter-process communication and networking
+- **Code Editing Layer**: Code manipulation, formatting, and analysis
+- **Documentation Layer**: Documentation generation and search
+- **Agent Layer**: AI agent integration and management
 
 ---
 
