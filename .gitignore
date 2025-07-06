@@ -3,6 +3,9 @@ bin/
 obj/
 out/
 
+# MCP Configuration (contains API keys)
+.vscode/mcp.json
+
 # Temporary FSI communication files (created at runtime)
 fsi_commands.txt
 fsi_responses.txt
@@ -380,6 +383,7 @@ FodyWeavers.xsd
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+!.vscode/mcp.json
 *.code-workspace
 
 # Local History for Visual Studio Code
