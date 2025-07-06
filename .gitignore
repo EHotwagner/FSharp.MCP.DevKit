@@ -3,9 +3,6 @@ bin/
 obj/
 out/
 
-# MCP Configuration (contains API keys)
-.vscode/mcp.json
-
 # Temporary FSI communication files (created at runtime)
 fsi_commands.txt
 fsi_responses.txt

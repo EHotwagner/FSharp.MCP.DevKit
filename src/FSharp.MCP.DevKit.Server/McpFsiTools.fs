@@ -7,6 +7,7 @@ open Microsoft.Extensions.Logging
 open FSharp.MCP.DevKit.Communication.IPC
 open FSharp.MCP.DevKit.Core
 open FSharp.MCP.DevKit.Analysis
+open FSharp.MCP.DevKit.Analysis.SmartSymbolDetection
 open ModelContextProtocol.Server
 open Fantomas.Core
 
@@ -1504,38 +1505,120 @@ module McpFsiTools =
                     return errorMessage
             }
 
-// NOTE: Paket integration is currently disabled due to technical limitations
-// The Paket dependency manager is not properly registered in FSI despite --compilertool:paket argument
-// Full Paket features (GitHub sourcing, file-specific downloads) are not supported
-// Use ReferenceNuGetPackage for standard package management instead
+        [<McpServerTool; Description("Get all symbols in F# source code with detailed information")>]
+        static member GetAllSymbols
+            (fsiService: FsiMcpService, [<Description("F# source code to analyze for symbols")>] sourceCode: string)
+            : Task<string> =
+            task {
+                try
+                    let symbolService = SmartSymbolDetection.createSymbolDetectionService ()
 
-// [<McpServerTool;
-//   Description("Reference a package using Paket syntax #r \"paket: nuget PackageName\" (fallback to NuGet if Paket not available)")>]
-// static member ReferencePaketPackage
-//     (
-//         fsiService: FsiMcpService,
-//         [<Description("Package name (e.g. 'FSharp.Data' or 'Newtonsoft.Json, 4.2.7')")>] packageName: string,
-//         [<Description("Timeout in seconds (optional, default: 30)")>] ?timeoutSeconds: int
-//     ) : Task<string> =
-//     task {
-//         let client = fsiService.GetClient()
+                    match symbolService.GetAllSymbols(sourceCode) with
+                    | Ok symbols ->
+                        let symbolCount = symbols.Length
 
-//         let timeout =
-//             match timeoutSeconds with
-//             | Some seconds -> TimeSpan.FromSeconds(float seconds)
-//             | None -> fsiService.DefaultTimeout
+                        let symbolsByKind =
+                            symbols
+                            |> Array.groupBy (fun s -> s.SymbolKind)
+                            |> Array.map (fun (kind, syms) ->
+                                let uniqueNames = syms |> Array.map (fun s -> s.Name) |> Array.distinct
+                                sprintf "%s (%d): %s" kind syms.Length (String.concat ", " uniqueNames))
+                            |> String.concat "\n"
 
-//         let! response = client.ReferencePaketPackage(packageName, timeout)
+                        let detailedSymbols =
+                            symbols
+                            |> Array.map (fun sym ->
+                                sprintf
+                                    "  %s (%s) at (%d,%d)-(%d,%d)\n    Full name: %s\n    Signature: %s"
+                                    sym.Name
+                                    sym.SymbolKind
+                                    sym.StartLine
+                                    sym.StartColumn
+                                    sym.EndLine
+                                    sym.EndColumn
+                                    (sym.FullTypeName |> Option.defaultValue "None")
+                                    (sym.Signature |> Option.defaultValue "None"))
+                            |> String.concat "\n\n"
 
-//         if response.IsSuccess then
-//             return $"Package referenced successfully using Paket syntax: {packageName}"
-//         else
-//             let baseError =
-//                 if String.IsNullOrEmpty(response.Errors) then
-//                     $"Failed to reference package with Paket: {packageName}"
-//                 else
-//                     $"Error referencing package with Paket: {response.Errors}"
+                        return
+                            sprintf
+                                "Found %d symbols:\n\nBy kind:\n%s\n\nDetailed list:\n%s"
+                                symbolCount
+                                symbolsByKind
+                                detailedSymbols
+                    | Error msg -> return sprintf "Error analyzing symbols: %s" msg
+                with ex ->
+                    return sprintf "Exception in symbol analysis: %s" ex.Message
+            }
 
-//             let errorMessage = formatErrorWithDiagnostics baseError response
-//             return errorMessage
-//     }
+        [<McpServerTool; Description("Find symbol at a specific position in F# source code")>]
+        static member GetSymbolAtPosition
+            (
+                fsiService: FsiMcpService,
+                [<Description("F# source code to analyze")>] sourceCode: string,
+                [<Description("Line number (1-based)")>] lineNumber: int,
+                [<Description("Column number (1-based)")>] columnNumber: int
+            ) : Task<string> =
+            task {
+                try
+                    let symbolService = SmartSymbolDetection.createSymbolDetectionService ()
+
+                    match symbolService.GetSymbolAtPosition(sourceCode, lineNumber, columnNumber) with
+                    | Ok symbol ->
+                        return
+                            sprintf
+                                "Symbol at line %d, column %d:\n  Name: %s\n  Kind: %s\n  Full name: %s\n  Signature: %s\n  Range: (%d,%d) to (%d,%d)\n  Documentation: %s"
+                                lineNumber
+                                columnNumber
+                                symbol.Name
+                                symbol.SymbolKind
+                                (symbol.FullTypeName |> Option.defaultValue "None")
+                                (symbol.Signature |> Option.defaultValue "None")
+                                symbol.StartLine
+                                symbol.StartColumn
+                                symbol.EndLine
+                                symbol.EndColumn
+                                (symbol.Documentation |> Option.defaultValue "None")
+                    | Error msg ->
+                        return sprintf "No symbol found at line %d, column %d: %s" lineNumber columnNumber msg
+                with ex ->
+                    return sprintf "Exception finding symbol at position: %s" ex.Message
+            }
+
+        [<McpServerTool; Description("Get a quick description of what symbol is at a specific position")>]
+        static member WhatIsAtPosition
+            (
+                fsiService: FsiMcpService,
+                [<Description("F# source code to analyze")>] sourceCode: string,
+                [<Description("Line number (1-based)")>] lineNumber: int,
+                [<Description("Column number (1-based)")>] columnNumber: int
+            ) : Task<string> =
+            task {
+                try
+                    let symbolService = SmartSymbolDetection.createSymbolDetectionService ()
+                    let result = symbolService.WhatIsAt(sourceCode, lineNumber, columnNumber)
+                    return sprintf "At line %d, column %d: %s" lineNumber columnNumber result
+                with ex ->
+                    return sprintf "Exception: %s" ex.Message
+            }
+
+        [<McpServerTool; Description("Get the signature of a symbol at a specific position")>]
+        static member GetSymbolSignatureAtPosition
+            (
+                fsiService: FsiMcpService,
+                [<Description("F# source code to analyze")>] sourceCode: string,
+                [<Description("Line number (1-based)")>] lineNumber: int,
+                [<Description("Column number (1-based)")>] columnNumber: int
+            ) : Task<string> =
+            task {
+                try
+                    let symbolService = SmartSymbolDetection.createSymbolDetectionService ()
+
+                    match symbolService.GetSignatureAtPosition(sourceCode, lineNumber, columnNumber) with
+                    | Ok signature ->
+                        return sprintf "Signature at line %d, column %d: %s" lineNumber columnNumber signature
+                    | Error msg ->
+                        return sprintf "No signature available at line %d, column %d: %s" lineNumber columnNumber msg
+                with ex ->
+                    return sprintf "Exception getting signature: %s" ex.Message
+            }

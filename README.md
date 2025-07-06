@@ -28,35 +28,99 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 
 ### 🔧 F# Interactive Integration
 
-- **Persistent FSI Session**: Stateful F# Interactive session management
-- **Code Execution**: Execute F# code with comprehensive error handling and validation
-- **Script Loading**: Load and manage F# script files with dependency tracking
-- **Package Management**: Reference .NET assemblies and NuGet packages seamlessly
-- **Expression Evaluation**: Evaluate F# expressions with full type information
+- **💾 Persistent FSI Session**: Stateful F# Interactive session management with cross-session state preservation
+  - *Powered by*: `FSIService` + `PermanentReplServer` - Maintains long-running FSI processes via named pipes with session isolation
+  - *How it works*: Spawns dedicated FSI processes, manages state through IPC communication, preserves bindings across tool calls
+  - *MCP Tools*: `CheckFSIServerStatus`, `ResetFSISession`, `RestartFSISession`, `GetFSIState`
+
+- **⚡ Code Execution**: Execute F# code with comprehensive error handling and validation
+  - *Powered by*: `ExecuteFSharpCode` + `ExecuteFSharpCodeDetailed` - Robust code execution with detailed diagnostics
+  - *How it works*: Submits code to FSI via IPC, captures stdout/stderr, parses compiler errors with line-level precision
+  - *MCP Tools*: `ExecuteFSharpCode`, `ExecuteFSharpCodeDetailed`, `EvaluateFSharpExpression`
+
+- **📁 Script Loading**: Load and manage F# script files with dependency tracking
+  - *Powered by*: `LoadFSharpScript` - Smart script loading with automatic dependency resolution
+  - *How it works*: Parses #load directives, resolves relative paths, maintains load order, handles circular dependencies
+  - *MCP Tools*: `LoadFSharpScript`, `AddSearchPath`
+
+- **📦 Package Management**: Reference .NET assemblies and NuGet packages seamlessly
+  - *Powered by*: `ReferenceAssembly` + `ReferenceNuGetPackage` - Dynamic assembly and package loading
+  - *How it works*: Uses #r directives for assemblies, NuGet package resolution via FSI's built-in package manager
+  - *MCP Tools*: `ReferenceAssembly`, `ReferenceNuGetPackage`
 
 ### 📚 Documentation Generation & Search
 
-- **📦 Package Documentation**: Generate comprehensive API docs for NuGet packages
-- **🔍 Smart Search**: Search through generated documentation with context-aware results
-- **📖 API Reference**: Create structured markdown documentation for modules and types
-- **🏗️ Project Documentation**: Bulk documentation generation for entire F# projects
-- **💾 Package Discovery**: Browse and explore available NuGet packages in local cache
-- **⚙️ Configuration Management**: Runtime configuration of documentation settings
+- **📦 Package Documentation**: Generate comprehensive API docs for NuGet packages with cross-reference linking
+  - *Powered by*: `GeneratePackageDocumentation` - Deep .NET assembly analysis with reflection-based documentation extraction
+  - *How it works*: Loads assemblies via reflection, extracts XML documentation comments, generates structured markdown with type hierarchies
+  - *MCP Tools*: `GeneratePackageDocumentation`, `ShowPackageInfo`
+
+- **🔍 Smart Search**: Search through generated documentation with context-aware results and fuzzy matching
+  - *Powered by*: `SearchDocumentation` - Full-text search across generated markdown with relevance scoring
+  - *How it works*: Indexes markdown content, performs case-insensitive substring matching, ranks results by context relevance
+  - *MCP Tools*: `SearchDocumentation`
+
+- **📖 API Reference**: Create structured markdown documentation for modules and types with navigation
+  - *Powered by*: Documentation generation engine - Converts .NET metadata to human-readable markdown format
+  - *How it works*: Parses assembly metadata, extracts type information, generates cross-linked documentation trees
+  - *Output format*: Hierarchical markdown files with consistent structure and cross-references
+
+- **🏗️ Project Documentation**: Bulk documentation generation for entire F# projects with dependency analysis
+  - *Powered by*: `GenerateProjectDocumentation` - Project-wide documentation with package dependency resolution
+  - *How it works*: Parses .fsproj files, resolves all package references, generates comprehensive documentation sets
+  - *MCP Tools*: `GenerateProjectDocumentation`
+
+- **💾 Package Discovery**: Browse and explore available NuGet packages in local cache with metadata
+  - *Powered by*: `ListCachedPackages` - Local NuGet cache exploration with search filtering
+  - *How it works*: Scans local NuGet cache directories, extracts package metadata, provides searchable package listings
+  - *MCP Tools*: `ListCachedPackages`, `SetDocumentationOutputDirectory`, `ShowDocumentationConfig`
 
 ### ✏️ Safe Code Manipulation
 
-- **🛡️ Safe Code Insertion**: Insert F# code with AST validation and type checking
-- **🎨 Code Formatting**: Deep integration with Fantomas for consistent code formatting
-- **🔍 Structure Analysis**: Analyze F# code structure, dependencies, and syntax
-- **👀 Preview Capabilities**: Preview code changes before applying them
-- **⚡ Atomic Operations**: Atomic file operations with backup/rollback support
+- **🛡️ Safe Code Insertion**: Insert F# code with AST validation and type checking to prevent syntax corruption
+  - *Powered by*: `InsertCode` - Multi-phase insertion with pre-validation, formatting, and post-validation
+  - *How it works*: Parses existing code to AST, validates insertion context, performs syntax-aware insertion, validates final result
+  - *MCP Tools*: `InsertCode`, `PreviewCodeInjection`
+
+- **🎨 Code Formatting**: Deep integration with Fantomas for consistent code formatting with configurable style
+  - *Powered by*: `FormatFile` - Fantomas-based formatting with F# community style standards
+  - *How it works*: Applies Fantomas formatting rules, preserves semantic meaning, maintains consistent indentation and spacing
+  - *MCP Tools*: `FormatFile`
+
+- **🔍 Structure Analysis**: Analyze F# code structure, dependencies, and syntax with detailed diagnostics
+  - *Powered by*: `AnalyzeCodeStructure` + `ParseSourceToAST` - Multi-level code analysis from syntax to semantics
+  - *How it works*: Parses code to AST, performs structural analysis, identifies patterns and potential issues
+  - *MCP Tools*: `AnalyzeCodeStructure`, `ParseSourceToAST`
+
+- **👀 Preview Capabilities**: Preview code changes before applying them with diff-style output
+  - *Powered by*: `PreviewCodeInjection` - Non-destructive change preview with context visualization
+  - *How it works*: Simulates code insertion, generates preview output showing before/after state without file modification
+  - *MCP Tools*: `PreviewCodeInjection`
+
+- **⚡ Atomic Operations**: Atomic file operations with backup/rollback support for safe editing
+  - *Powered by*: Atomic file writing system - Ensures consistency during file modifications
+  - *How it works*: Creates temporary files, performs operations atomically, provides rollback on failure
+  - *Features*: Transaction-like semantics, automatic backup creation, error recovery
 
 ### 🧠 Advanced Analysis Tools
 
 - **🔍 Symbol Detection**: Advanced symbol detection and resolution
+  - *Powered by*: `SmartSymbolDetectionService` - Uses F# Compiler Services to identify and resolve symbols, functions, types, and modules within F# code
+  - *How it works*: Parses source code into AST, performs semantic analysis to resolve symbol bindings, their scope, and provides position-sensitive symbol lookup
+  - *MCP Tools*: `GetAllSymbols`, `GetSymbolAtPosition`, `WhatIsAtPosition`, `GetSymbolSignatureAtPosition`
+
 - **📊 Syntax Validation**: Comprehensive F# syntax analysis and error reporting
+  - *Powered by*: `ParseAndCheckFSharpCode` - Validates F# syntax and performs type checking with detailed diagnostics
+  - *How it works*: Uses F# Compiler Services via IPC to parse source code, check for syntax errors, type mismatches, and compiler warnings with line-level error locations
+
 - **🗂️ Dependency Analysis**: Track and analyze code dependencies and relationships
+  - *Powered by*: `AnalyzeCodeStructure` - Provides basic file analysis including line count, character count, and diagnostic summaries
+  - *How it works*: Performs F# Compiler Services parsing to identify errors, warnings, and structural issues in F# files
+  - *Current scope*: File-level analysis rather than deep dependency graph analysis
+
 - **🎯 Position-Sensitive Analysis**: Context-aware code analysis based on cursor position
+  - *Powered by*: `InsertCode` validation + `PreviewCodeInjection` - Provides contextual analysis for safe code insertion
+  - *How it works*: Analyzes insertion context to prevent breaking multi-line constructs (type definitions, unions, records) and validates combined code after insertion
 
 ## 🏗️ Architecture
 
@@ -251,6 +315,10 @@ The server provides **30+ specialized MCP tools** organized into categories:
 - `AnalyzeCodeStructure` - Analyze F# code structure and dependencies
 - `ParseAndCheckFSharpCode` - Parse and validate F# syntax and types
 - `ParseSourceToAST` - Parse code to Abstract Syntax Tree
+- `GetAllSymbols` - Get all symbols in F# source code with detailed information
+- `GetSymbolAtPosition` - Find symbol at a specific position in F# source code
+- `WhatIsAtPosition` - Get a quick description of what symbol is at a specific position  
+- `GetSymbolSignatureAtPosition` - Get the signature of a symbol at a specific position
 
 ### 🛠️ Utility & Management
 
