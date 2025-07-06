@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
