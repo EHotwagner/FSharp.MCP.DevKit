@@ -24,10 +24,11 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 - REPL works with hosted FSI sessions, which in this context are not easy to configure, a bit fragile with some Input, have no nice output (only MCP-Tools output terminal and agent chat window). Letting the agent start a standard fsi process in an agent observed terminal is of course possible but cumbersome in VSCode since terminal actions need approval. This project should be neutral to the chosen approach in the future. VsCode Insiders has <https://github.com/microsoft/vscode/issues/253103> which changes the ergonomics a lot. Needs consideration.
 - **Get Started**: There are no releases yet. For VSCode use this <https://devblogs.microsoft.com/dotnet/build-a-model-context-protocol-mcp-server-in-csharp/> approach. Add the project to the mcp.json file. Later a dotnet tool might be the best way to distribute this project.
 
-## ✨ Key Features
+## ✨ Features
 
 ### 🔧 F# Interactive Integration
 
+- **Projects**: [`FSharp.MCP.DevKit.Core`](./src/FSharp.MCP.DevKit.Core/), [`FSharp.MCP.DevKit.Communication`](./src/FSharp.MCP.DevKit.Communication/)
 - **💾 Persistent FSI Session**: Stateful F# Interactive session management with cross-session state preservation
   - *Powered by*: `FSIService` + `PermanentReplServer` - Maintains long-running FSI processes via named pipes with session isolation
   - *How it works*: Spawns dedicated FSI processes, manages state through IPC communication, preserves bindings across tool calls
@@ -50,6 +51,7 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 
 ### 📚 Documentation Generation & Search
 
+- **Projects**: [`FSharp.MCP.DevKit.Documentation`](./src/FSharp.MCP.DevKit.Documentation/), [`FSharp.MCP.DevKit.Documentation.Tool`](./src/FSharp.MCP.DevKit.Documentation.Tool/)
 - **📦 Package Documentation**: Generate comprehensive API docs for NuGet packages with cross-reference linking
   - *Powered by*: `GeneratePackageDocumentation` - Deep .NET assembly analysis with reflection-based documentation extraction
   - *How it works*: Loads assemblies via reflection, extracts XML documentation comments, generates structured markdown with type hierarchies
@@ -77,6 +79,7 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 
 ### ✏️ Safe Code Manipulation
 
+- **Project**: [`FSharp.MCP.DevKit.CodeEditing`](./src/FSharp.MCP.DevKit.CodeEditing/)
 - **🛡️ Safe Code Insertion**: Insert F# code with AST validation and type checking to prevent syntax corruption
   - *Powered by*: `InsertCode` - Multi-phase insertion with pre-validation, formatting, and post-validation
   - *How it works*: Parses existing code to AST, validates insertion context, performs syntax-aware insertion, validates final result
@@ -104,6 +107,7 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 
 ### 🧠 Advanced Analysis Tools
 
+- **Project**: [`FSharp.MCP.DevKit.Analysis`](./src/FSharp.MCP.DevKit.Analysis/)
 - **🔍 Symbol Detection**: Advanced symbol detection and resolution
   - *Powered by*: `SmartSymbolDetectionService` - Uses F# Compiler Services to identify and resolve symbols, functions, types, and modules within F# code
   - *How it works*: Parses source code into AST, performs semantic analysis to resolve symbol bindings, their scope, and provides position-sensitive symbol lookup
@@ -121,208 +125,6 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 - **🎯 Position-Sensitive Analysis**: Context-aware code analysis based on cursor position
   - *Powered by*: `InsertCode` validation + `PreviewCodeInjection` - Provides contextual analysis for safe code insertion
   - *How it works*: Analyzes insertion context to prevent breaking multi-line constructs (type definitions, unions, records) and validates combined code after insertion
-
-## 🏗️ Architecture
-
-The FSharp.MCP.DevKit follows a **modular, layered architecture** with clear separation of concerns:
-
-```
-├── 🔧 FSharp.MCP.DevKit.Core/          # Foundation layer
-│   ├── FSI session management & execution
-│   ├── File system utilities & helpers  
-│   └── Core types & configurations
-│
-├── 🔍 FSharp.MCP.DevKit.Analysis/      # Code intelligence layer
-│   ├── F# syntax validation & analysis
-│   ├── Symbol detection & resolution
-│   └── Code structure analysis
-│
-├── 📡 FSharp.MCP.DevKit.Communication/ # IPC infrastructure
-│   ├── High-performance named pipes
-│   └── Persistent REPL server
-│
-├── ✏️ FSharp.MCP.DevKit.CodeEditing/   # Code manipulation layer
-│   ├── Safe code insertion & editing
-│   ├── Fantomas formatting integration
-│   └── Atomic file operations
-│
-├── 📚 FSharp.MCP.DevKit.Documentation/ # Documentation generation
-│   ├── .NET assembly analysis
-│   ├── NuGet package documentation
-│   └── Markdown API reference generation
-│
-└── 🌐 FSharp.MCP.DevKit.Server/        # MCP server & tools
-    ├── MCP protocol implementation
-    ├── 30+ specialized F# tools
-    └── Server runtime & hosting
-```
-
-### 🔄 Data Flow Architecture
-
-```mermaid
-graph TB
-    subgraph "🤖 AI Assistant Layer"
-        Assistant["`**AI Assistant**
-        (Claude, GPT, etc.)
-        • F# Development Support
-        • Code Generation
-        • Interactive Analysis`"]
-    end
-    
-    subgraph "📡 MCP Protocol Layer"
-        MCPServer["`**MCP Server**
-        • 30+ F# Tools
-        • Stdio Transport
-        • JSON-RPC Protocol`"]
-    end
-    
-    subgraph "🌐 Application Layer"
-        Server["`**FSharp.MCP.DevKit.Server**
-        • Tool Implementation
-        • Request Routing
-        • Error Handling`"]
-    end
-    
-    subgraph "🛠️ Service Layers"
-        Documentation["`**📚 Documentation**
-        • Package Documentation
-        • API Reference Generation
-        • Smart Search & Discovery`"]
-        
-        DocumentationTool["`**🔧 Documentation Tool**
-        • CLI for Doc Generation`"]
-
-        CodeEditing["`**✏️ Code Editing**
-        • Safe Code Insertion
-        • Fantomas Integration
-        • Atomic Operations`"]
-        
-        Communication["`**📡 Communication**
-        • Named Pipes IPC
-        • Concurrent Processing
-        • REPL Server`"]
-        
-        Analysis["`**🔍 Analysis**
-        • Symbol Detection
-        • Syntax Validation
-        • Structure Analysis`"]
-    end
-    
-    subgraph "🔧 Foundation Layer"
-        Core["`**FSharp.MCP.DevKit.Core**
-        • FSI Session Management
-        • File Operations
-        • Configuration`"]
-    end
-    
-    subgraph "🔗 External Dependencies"
-        FCS["`**F# Compiler Services**
-        • Code Compilation
-        • Type Checking
-        • AST Analysis`"]
-        
-        Fantomas["`**Fantomas**
-        • Code Formatting
-        • Style Enforcement`"]
-        
-        FSI["`**F# Interactive**
-        • Code Execution
-        • REPL Environment`"]
-    end
-    
-    %% Connections
-    Assistant <--> MCPServer
-    MCPServer <--> Server
-    Server --> Documentation
-    Server --> CodeEditing
-    Server --> Communication
-    Server --> Analysis
-    Documentation --> Core
-    DocumentationTool --> Documentation
-    CodeEditing --> Core
-    Communication --> Core
-    Analysis --> Core
-    
-    %% External integrations
-    Core --> FCS
-    Core --> FSI
-    CodeEditing --> Fantomas
-    Analysis --> FCS
-    Documentation --> FCS
-    
-    %% Styling
-    classDef aiLayer fill:#4B0082,stroke:#ffffff,stroke-width:3px,color:#ffffff
-    classDef mcpLayer fill:#8B0000,stroke:#ffffff,stroke-width:2px,color:#ffffff
-    classDef appLayer fill:#000080,stroke:#ffffff,stroke-width:2px,color:#ffffff
-    classDef serviceLayer fill:#006400,stroke:#ffffff,stroke-width:2px,color:#ffffff
-    classDef foundationLayer fill:#2F4F4F,stroke:#ffffff,stroke-width:2px,color:#ffffff
-    classDef externalDep fill:#FF8C00,stroke:#000000,stroke-width:2px,color:#000000
-    
-    class Assistant aiLayer
-    class MCPServer mcpLayer
-    class Server appLayer
-    class Documentation,CodeEditing,Communication,Analysis,DocumentationTool serviceLayer
-    class Core foundationLayer
-    class FCS,Fantomas,FSI externalDep
-```
-
-## 🛠️ MCP Tools Overview
-
-The server provides **30+ specialized MCP tools** organized into categories:
-
-### 📚 Documentation Tools (New!)
-
-- `GeneratePackageDocumentation` - Generate comprehensive API docs for NuGet packages
-- `GenerateProjectDocumentation` - Bulk documentation for entire F# projects  
-- `SearchDocumentation` - Search through generated documentation with context
-- `ListCachedPackages` - Browse available NuGet packages in local cache
-- `ShowPackageInfo` - Get detailed information about specific packages
-- `SetDocumentationOutputDirectory` - Configure documentation output settings
-- `ShowDocumentationConfig` - Display current documentation configuration
-
-### 🔧 FSI Management
-
-- `CheckFSIServerStatus` - Check FSI server status and availability
-- `ResetFSISession` - Reset the FSI session clearing all state
-- `RestartFSISession` - Restart FSI session (stop and start fresh)
-- `GetFSIState` - Get current FSI state and bindings
-
-### ⚡ Code Execution
-
-- `ExecuteFSharpCode` - Execute F# code with comprehensive error handling
-- `ExecuteFSharpCodeDetailed` - Execute with detailed error information
-- `EvaluateFSharpExpression` - Evaluate expressions with type information
-- `LoadFSharpScript` - Load F# script files with dependency tracking
-- `ReferenceAssembly` - Reference .NET assemblies
-- `ReferenceNuGetPackage` - Reference NuGet packages dynamically
-- `AddSearchPath` - Add directories to F# search path
-
-### ✏️ Code Manipulation & File Operations
-
-- `InsertCode` - Unified code insertion with validation and formatting
-- `PreviewCodeInjection` - Preview code changes before applying
-- `FormatFile` - Format entire F# files using Fantomas
-- `DeleteLines` - Delete specific lines from files
-- `ReplaceTextRange` - Replace text in specific line ranges
-- `SearchAndReplace` - Search and replace with pattern matching
-- `MoveCodeBlock` - Move code blocks between locations
-- `GetLines` - Extract specific lines for inspection
-- `CountLines` - Count lines and characters in files
-- `SearchInFile` - Search for patterns with line numbers
-
-### 🔍 Analysis & Structure
-
-- `AnalyzeCodeStructure` - Analyze F# code structure and dependencies
-- `ParseAndCheckFSharpCode` - Parse and validate F# syntax and types
-- `ParseSourceToAST` - Parse code to Abstract Syntax Tree
-- `GetAllSymbols` - Get all symbols in F# source code with detailed information
-- `GetSymbolAtPosition` - Find symbol at a specific position in F# source code
-- `WhatIsAtPosition` - Get a quick description of what symbol is at a specific position  
-- `GetSymbolSignatureAtPosition` - Get the signature of a symbol at a specific position
-
-### 🛠️ Utility & Management
-
-- `KillAll` - Kill all MCP server processes for clean restarts (temporary till FAKE integration)
 
 ## 🚀 Usage Examples
 
