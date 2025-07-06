@@ -62,20 +62,5 @@
     "Always consider F# functional programming principles",
     "Provide clear explanations for design decisions",
     "Follow the project's established patterns and conventions"
-  ],
-  // MCP configuration
-  "chat.mcp.enabled": true,
-  "mcp": {
-    "servers": {
-      "fsharpDevKit": {
-        "type": "stdio",
-        "command": "dotnet",
-        "args": [
-          "run",
-          "--project",
-          "${workspaceFolder}/src/FSharp.MCP.DevKit.Server/FSharp.MCP.DevKit.Server.fsproj"
-        ]
-      }
-    }
-  }
+  ]
 }
