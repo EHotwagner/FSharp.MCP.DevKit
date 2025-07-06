@@ -23,6 +23,8 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 
 - REPL works with hosted FSI sessions, which in this context are not easy to configure, a bit fragile with some Input, have no nice output (only MCP-Tools output terminal and agent chat window). Letting the agent start a standard fsi process in an agent observed terminal is of course possible but cumbersome in VSCode since terminal actions need approval. This project should be neutral to the chosen approach in the future. VsCode Insiders has <https://github.com/microsoft/vscode/issues/253103> which changes the ergonomics a lot. Needs consideration.
 - **Get Started**: There are no releases yet. For VSCode use this <https://devblogs.microsoft.com/dotnet/build-a-model-context-protocol-mcp-server-in-csharp/> approach. Add the project to the mcp.json file. Later a dotnet tool might be the best way to distribute this project.
+- **Contributions Welcome**: This project is open to contributions.
+- **Status**: Need to do lots of research next. These are tools for AI agents not humans. The complete agent workflow is something like: model + context + tools. I need to know more about Context management and what tools might work with what context. Improving prototyped tools might not be that useful, maybe less is more, who knows. How to best integrate fake and dotnet tool support is very important in my opinion since it gives the agent controlled and structured ways to iterate.
 
 ## ✨ Features
 
