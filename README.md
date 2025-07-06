@@ -394,14 +394,6 @@ The toolkit supports multiple development philosophies, each optimized for diffe
 - **[🛠️ Copilot Instructions](docs/Agent-Instructions-Strategies/Signature-Driven-Default/copilot-instructions.md)** - Instructions for implementing signature-driven workflows
 - **Key Characteristics**: Explicit contracts, enhanced validation, clear module boundaries, improved collaboration
 
-#### 📜 [Signature-Driven Development](docs/Agent-Instructions-Strategies/Signature-Driven-Default/)
-
-**Recommended for: Contract-first development, rigorous validation, clear interfaces**
-
-- **[📖 Design Philosophy](docs/Agent-Instructions-Strategies/Signature-Driven-Default/Design.md)** - In-depth exploration of signature-driven development principles
-- **[🛠️ Copilot Instructions](docs/Agent-Instructions-Strategies/Signature-Driven-Default/copilot-instructions.md)** - Instructions for implementing signature-driven workflows
-- **Key Characteristics**: Explicit contracts, enhanced validation, clear module boundaries, improved collaboration
-
 ## 📖 Documentation
 
 ### 📂 Project Documentation
@@ -420,10 +412,7 @@ Comprehensive documentation organized by project:
 
 - **[🏗️ Architecture](docs/Architecture.md)** - System design and architecture
 - **[✨ Features](docs/Features.md)** - Detailed feature documentation
-- **[🎯 Terminal Code Execution](docs/Terminal-Code-Execution.md)** - Multi-terminal F# execution and session targeting
-- **[🎯 Terminal Code Execution](docs/Terminal-Code-Execution.md)** - Proposal for Multi-terminal F# execution and session targeting
-- **[📝 Design & Analysis](docs/DESIGN_AND_ANALYSIS.md)** - Design decisions and analysis
-- **[📋 Implementation Summary](docs/Implementation-Summary.md)** - Implementation details
+- **[🎯 Terminal Code Execution](docs/Terminal-Code-Execution.md)** - Proposal for multi-terminal F# execution and session targeting
 - **[🗂️ Plans & Specifications](docs/plans/)** - Development roadmaps
 
 ## �️ Development Roadmap
