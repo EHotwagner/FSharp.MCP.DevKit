@@ -18,7 +18,13 @@ let main argv =
     // Register FSI service
     builder.Services.AddSingleton<FsiMcpService>() |> ignore
 
-    // Configure MCP server
+    // Register FsAutoComplete service
+    builder.Services.AddSingleton<FsAutoCompleteService>() |> ignore
+
+    // Register FsAutoComplete tools with dependency injection
+    builder.Services.AddSingleton<FsAutoCompleteTools>() |> ignore
+
+    // Configure MCP server with all tools
     builder.Services.AddMcpServer().WithStdioServerTransport().WithToolsFromAssembly()
     |> ignore
 
