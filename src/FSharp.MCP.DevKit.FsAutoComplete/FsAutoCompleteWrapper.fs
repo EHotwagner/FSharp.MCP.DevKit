@@ -75,6 +75,44 @@ type FsAutoCompleteWrapper(config: FsAutoCompleteWrapperConfig, logger: ILogger<
     member _.GetCacheSummary() =
         diagnosticsCache |> Option.map (fun cache -> cache.GetCacheSummary())
 
+    /// Wait for diagnostics for a specific document to be published
+    member this.WaitForDiagnosticsAsync(uri: string, timeout: TimeSpan) : Async<Microsoft.FSharp.Core.Result<Diagnostic[], string>> =
+        async {
+            let tcs = TaskCompletionSource<Diagnostic[]>()
+            let mutable subscription: IDisposable option = None
+
+            try
+                let handler =
+                    fun (event: FsAutoCompleteEvent) ->
+                        match event with
+                        | DiagnosticsReceived(eventUri, diagnostics) when eventUri = uri ->
+                            tcs.TrySetResult(diagnostics) |> ignore
+                        | _ -> ()
+
+                subscription <- Some(wrapperEvents.Publish.Subscribe(handler))
+
+                // Use cancellation token for timeout
+                use cts = new CancellationTokenSource(timeout)
+
+                try
+                    let! diagnostics =
+                        Async.StartAsTask(
+                            async {
+                                return! tcs.Task |> Async.AwaitTask
+                            },
+                            cancellationToken = cts.Token
+                        ) |> Async.AwaitTask
+
+                    return Microsoft.FSharp.Core.Ok diagnostics
+                with
+                | :? OperationCanceledException ->
+                    return Microsoft.FSharp.Core.Error $"Timeout waiting for diagnostics for {uri}"
+                | ex ->
+                    return Microsoft.FSharp.Core.Error $"Error waiting for diagnostics for {uri}: {ex.Message}"
+            finally
+                subscription |> Option.iter (fun s -> s.Dispose())
+        }
+
     /// Start the FsAutoComplete server
     member this.StartAsync(?cancellationToken: CancellationToken) : Async<Result<unit, string>> =
         async {

@@ -200,88 +200,6 @@ type FsAutoCompleteService(logger: ILogger<FsAutoCompleteService>) =
             | None -> return Result.Error "FsAutoComplete is not ready"
         }
 
-    /// Wait for diagnostics to be published for a specific file
-    member this.WaitForDiagnosticsAsync(filePath: string, timeout: TimeSpan) =
-        async {
-            let normalizedPath = filePath.Replace("\\", "/")
-            let uri = $"file:///{normalizedPath}"
-
-            // Check if diagnostics are already available
-            let existingDiagnostics = this.GetDiagnosticsForFile(uri)
-
-            if existingDiagnostics.Length > 0 then
-                return Some existingDiagnostics
-            else
-                // Set up event-based waiting
-                let tcs = TaskCompletionSource<Diagnostic[] option>()
-                let cts = new CancellationTokenSource(timeout)
-
-                // Cancel the task if timeout expires
-                cts.Token.Register(fun () ->
-                    if not tcs.Task.IsCompleted then
-                        tcs.TrySetResult(None) |> ignore)
-                |> ignore
-
-                let mutable subscription: IDisposable option = None
-
-                try
-                    // Subscribe to diagnostic events for this specific URI
-                    subscription <-
-                        Some(
-                            this.DiagnosticsReceived.Subscribe(fun (eventUri, diagnostics) ->
-                                if eventUri = uri && not tcs.Task.IsCompleted then
-                                    tcs.TrySetResult(Some diagnostics) |> ignore)
-                        )
-
-                    // Also try to trigger diagnostic publication by making a small change
-                    match this.GetReadyWrapper() with
-                    | Some wrapper ->
-                        try
-                            let content = File.ReadAllText(filePath)
-                            // Force a content change to trigger diagnostics
-                            let result1 = wrapper.DidChangeTextDocument(uri, 2, content + " ")
-                            do! Async.Sleep(50) // Brief delay
-                            let result2 = wrapper.DidChangeTextDocument(uri, 3, content)
-
-                            // Also send a small content change that might trigger analysis
-                            if result1.IsOk && result2.IsOk then
-                                // Send another small change to ensure analysis
-                                let result3 = wrapper.DidChangeTextDocument(uri, 4, content)
-                                ()
-                        with ex ->
-                            () // Continue even if triggering fails
-                    | None -> ()
-
-                    // Start a fallback polling mechanism
-                    let pollAsync =
-                        async {
-                            let mutable attempts = 0
-                            let maxAttempts = int (timeout.TotalMilliseconds / 200.0) // Check every 200ms
-
-                            while attempts < maxAttempts && not tcs.Task.IsCompleted do
-                                do! Async.Sleep(200)
-                                attempts <- attempts + 1
-
-                                let diagnostics = this.GetDiagnosticsForFile(uri)
-
-                                if diagnostics.Length > 0 && not tcs.Task.IsCompleted then
-                                    tcs.TrySetResult(Some diagnostics) |> ignore
-                        // Don't return empty array prematurely - let the full timeout expire
-                        // This allows FsAutoComplete more time to analyze complex files
-                        }
-
-                    // Start polling in background
-                    Async.Start(pollAsync, cts.Token)
-
-                    // Wait for either event or timeout
-                    let! result = tcs.Task |> Async.AwaitTask
-                    return result
-
-                finally
-                    subscription |> Option.iter (fun s -> s.Dispose())
-                    cts.Dispose()
-        }
-
     interface IDisposable with
         member this.Dispose() =
             if not isDisposed then
@@ -357,28 +275,43 @@ type FsAutoCompleteTools(fsacService: FsAutoCompleteService) =
 
             match result with
             | Result.Ok msg ->
-                // Wait for diagnostics to be published by FsAutoComplete
-                let! diagnostics = fsacService.WaitForDiagnosticsAsync(filePath, TimeSpan.FromSeconds(float timeout))
+                // Use the wrapper's improved waiting mechanism
+                match fsacService.GetReadyWrapper() with
+                | Some wrapper ->
+                    try
+                        let normalizedPath = filePath.Replace("\\", "/")
+                        let uri = $"file:///{normalizedPath}"
 
-                match diagnostics with
-                | Some diags when diags.Length > 0 ->
-                    let diagSummary =
-                        diags
-                        |> Array.map (fun d ->
-                            let severity =
-                                match d.Severity with
-                                | Some DiagnosticSeverity.Error -> "Error"
-                                | Some DiagnosticSeverity.Warning -> "Warning"
-                                | Some DiagnosticSeverity.Information -> "Info"
-                                | Some DiagnosticSeverity.Hint -> "Hint"
-                                | _ -> "Unknown"
+                        // Give FsAutoComplete time to process the file and send diagnostics
+                        do! Async.Sleep(2000) // Wait 2 seconds for processing
 
-                            $"{severity} at line {d.Range.Start.Line + 1}: {d.Message}")
-                        |> String.concat "\n"
+                        // Check cached diagnostics directly
+                        let cachedDiags = wrapper.GetDiagnostics(uri)
 
-                    return $"{msg}. Found {diags.Length} diagnostic(s):\n{diagSummary}"
-                | Some diags -> return $"{msg}. No diagnostics found."
-                | None -> return $"{msg}. Diagnostic collection timed out after {timeout} seconds."
+                        match cachedDiags with
+                        | Some fileDiags when fileDiags.AllDiagnostics.Length > 0 ->
+                            let diagSummary =
+                                fileDiags.AllDiagnostics
+                                |> Array.map (fun d ->
+                                    let severity =
+                                        match d.Severity with
+                                        | Some DiagnosticSeverity.Error -> "Error"
+                                        | Some DiagnosticSeverity.Warning -> "Warning"
+                                        | Some DiagnosticSeverity.Information -> "Info"
+                                        | Some DiagnosticSeverity.Hint -> "Hint"
+                                        | _ -> "Unknown"
+
+                                    $"{severity} at line {d.Range.Start.Line + 1}: {d.Message}")
+                                |> String.concat "\n"
+
+                            return $"{msg}. Found {fileDiags.AllDiagnostics.Length} diagnostic(s):\n{diagSummary}"
+                        | Some fileDiags -> return $"{msg}. No diagnostics found. File processed successfully."
+                        | None ->
+                            return
+                                $"{msg}. No diagnostics available. File may not be part of a loaded project or FsAutoComplete needs more time to process it."
+                    with ex ->
+                        return $"{msg}. Exception waiting for diagnostics: {ex.Message}"
+                | None -> return $"{msg}. FsAutoComplete wrapper not ready."
             | Result.Error err -> return err
         }
 

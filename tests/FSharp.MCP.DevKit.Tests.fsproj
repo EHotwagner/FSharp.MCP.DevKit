@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="DiagnosticTest.fs" />
     <Compile Include="SmartSymbolDetectionServiceTests.fs" />
   </ItemGroup>
 
