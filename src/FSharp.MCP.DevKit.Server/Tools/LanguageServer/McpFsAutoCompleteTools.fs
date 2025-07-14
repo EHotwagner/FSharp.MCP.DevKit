@@ -689,10 +689,12 @@ type FsAutoCompleteTools(fsacService: FsAutoCompleteService) =
                                         let range = cl.Range
                                         let startLine = range.Start.Line + 1 // Convert to 1-based
                                         let endLine = range.End.Line + 1
-                                        let commandInfo = 
+
+                                        let commandInfo =
                                             match cl.Command with
                                             | Some cmd -> $" - Command: {cmd.Title}"
                                             | None -> " - (Unresolved)"
+
                                         $"[{i + 1}] Line {startLine}-{endLine}{commandInfo}")
                                     |> String.concat "\n"
 
@@ -719,7 +721,7 @@ type FsAutoCompleteTools(fsacService: FsAutoCompleteService) =
                 try
                     // First get the CodeLens items
                     let! codeLensResult = this.GetCodeLens(filePath, ?timeoutSeconds = timeoutSeconds)
-                    
+
                     // Parse out the original CodeLens data (this is a simplified approach)
                     // In a more robust implementation, you'd cache the original CodeLens objects
                     let normalizedPath = filePath.Replace("\\", "/")
@@ -731,7 +733,7 @@ type FsAutoCompleteTools(fsacService: FsAutoCompleteService) =
                     | Result.Ok codeLenses ->
                         if codeLensIndex >= 0 && codeLensIndex < codeLenses.Length then
                             let codeLens = codeLenses.[codeLensIndex]
-                            
+
                             // Resolve the CodeLens to get the full command
                             let! resolvedResult = wrapper.ResolveCodeLens(codeLens) |> Async.StartAsTask
 
@@ -740,25 +742,23 @@ type FsAutoCompleteTools(fsacService: FsAutoCompleteService) =
                                 let range = resolvedCodeLens.Range
                                 let startLine = range.Start.Line + 1
                                 let endLine = range.End.Line + 1
-                                
+
                                 match resolvedCodeLens.Command with
                                 | Some cmd ->
-                                    let argsInfo = 
+                                    let argsInfo =
                                         match cmd.Arguments with
-                                        | Some args when args.Length > 0 -> 
+                                        | Some args when args.Length > 0 ->
                                             let argsStr = String.concat ", " (args |> Array.map (fun a -> a.ToString()))
                                             $"\nArguments: {argsStr}"
                                         | _ -> ""
-                                    
-                                    return $"Resolved CodeLens at line {startLine}-{endLine}:\nTitle: {cmd.Title}\nCommand: {cmd.Command}{argsInfo}"
-                                | None ->
-                                    return $"CodeLens at line {startLine}-{endLine} has no command information"
-                            | Result.Error err -> 
-                                return $"Failed to resolve CodeLens: {err}"
+
+                                    return
+                                        $"Resolved CodeLens at line {startLine}-{endLine}:\nTitle: {cmd.Title}\nCommand: {cmd.Command}{argsInfo}"
+                                | None -> return $"CodeLens at line {startLine}-{endLine} has no command information"
+                            | Result.Error err -> return $"Failed to resolve CodeLens: {err}"
                         else
                             return $"Invalid CodeLens index {codeLensIndex}. Valid range: 0-{codeLenses.Length - 1}"
-                    | Result.Error err -> 
-                        return $"Failed to get CodeLens items: {err}"
+                    | Result.Error err -> return $"Failed to get CodeLens items: {err}"
                 with ex ->
                     return $"Exception resolving CodeLens: {ex.Message}"
             | None -> return "FsAutoComplete is not ready. Please start it first."
@@ -787,7 +787,7 @@ type FsAutoCompleteTools(fsacService: FsAutoCompleteService) =
                         match codeLensResult with
                         | Result.Ok codeLenses ->
                             if codeLenses.Length > 0 then
-                                let! resolvedResults = 
+                                let! resolvedResults =
                                     codeLenses
                                     |> Array.map (fun cl -> wrapper.ResolveCodeLens(cl) |> Async.StartAsTask)
                                     |> Task.WhenAll
@@ -800,18 +800,17 @@ type FsAutoCompleteTools(fsacService: FsAutoCompleteService) =
                                             let range = resolvedCl.Range
                                             let startLine = range.Start.Line + 1
                                             let endLine = range.End.Line + 1
-                                            
+
                                             match resolvedCl.Command with
                                             | Some cmd ->
-                                                let argsCount = 
+                                                let argsCount =
                                                     match cmd.Arguments with
                                                     | Some args -> args.Length
                                                     | None -> 0
+
                                                 $"[{i + 1}] Line {startLine}-{endLine}: {cmd.Title} (Command: {cmd.Command}, Args: {argsCount})"
-                                            | None ->
-                                                $"[{i + 1}] Line {startLine}-{endLine}: (No command)"
-                                        | Result.Error err ->
-                                            $"[{i + 1}] Resolution failed: {err}")
+                                            | None -> $"[{i + 1}] Line {startLine}-{endLine}: (No command)"
+                                        | Result.Error err -> $"[{i + 1}] Resolution failed: {err}")
                                     |> String.concat "\n"
 
                                 return $"Found {codeLenses.Length} CodeLens item(s) in {filePath}:\n{detailedSummary}"

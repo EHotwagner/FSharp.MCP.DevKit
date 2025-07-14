@@ -130,6 +130,15 @@ type FsAutoCompleteWrapper(config: FsAutoCompleteWrapperConfig, logger: ILogger<
                                     match initResult with
                                     | Result.Ok capabilities ->
                                         serverCapabilities <- capabilities
+
+                                        // Configure CodeLens after successful initialization
+                                        let! configResult = this.ConfigureCodeLensAsync(timeoutCt)
+                                        match configResult with
+                                        | Result.Ok() ->
+                                            logger.LogDebug("CodeLens configuration completed")
+                                        | Result.Error err ->
+                                            logger.LogWarning("CodeLens configuration failed: {Error}", err)
+
                                         this.SetState(Ready)
                                         wrapperEvents.Trigger(InitializationCompleted capabilities)
                                         logger.LogInformation("FsAutoComplete wrapper is ready")
@@ -464,18 +473,50 @@ type FsAutoCompleteWrapper(config: FsAutoCompleteWrapperConfig, logger: ILogger<
             try
                 let ct = CancellationToken.None
                 let responseTask = comm.SendRequestAsync("textDocument/codeLens", Some(box codeLensParams), ct)
-                
+
                 async {
                     let! responseResult = responseTask |> Async.AwaitTask
                     match responseResult with
                     | Result.Ok response ->
                         try
-                            let codeLenses = System.Text.Json.JsonSerializer.Deserialize<CodeLens[]>(response.Result.ToString())
-                            return Result.Ok codeLenses
+                            // Handle null/empty responses gracefully
+                            match response.Result with
+                            | None ->
+                                logger.LogDebug("CodeLens returned null result")
+                                return Result.Ok [||]
+                            | Some result ->
+                                let resultStr = result.ToString()
+                                logger.LogDebug("CodeLens raw response: {Response}", resultStr)
+
+                                // Handle empty string or "null" responses
+                                if String.IsNullOrWhiteSpace(resultStr) || resultStr = "null" then
+                                    logger.LogDebug("CodeLens returned empty/null string")
+                                    return Result.Ok [||]
+                                else
+                                    try
+                                        // First try to deserialize as CodeLens[] directly
+                                        let codeLenses = System.Text.Json.JsonSerializer.Deserialize<CodeLens[]>(resultStr)
+                                        return Result.Ok codeLenses
+                                    with
+                                    | :? System.Text.Json.JsonException as ex when ex.Message.Contains("'S' is an invalid start") ->
+                                        // Try deserializing as Option<CodeLens[]> for FsAutoComplete compatibility
+                                        try
+                                            let optionalCodeLenses = System.Text.Json.JsonSerializer.Deserialize<CodeLens[] option>(resultStr)
+                                            match optionalCodeLenses with
+                                            | Some codeLenses -> return Result.Ok codeLenses
+                                            | None ->
+                                                logger.LogDebug("CodeLens optional result was None")
+                                                return Result.Ok [||]
+                                        with innerEx ->
+                                            logger.LogError(innerEx, "Failed to deserialize as optional CodeLens array")
+                                            return Result.Error $"Deserialization error: {innerEx.Message}"
+                                    | ex ->
+                                        logger.LogError(ex, "Failed to deserialize CodeLens response")
+                                        return Result.Error $"Deserialization error: {ex.Message}"
                         with ex ->
-                            logger.LogError(ex, "Failed to deserialize CodeLens response")
-                            return Result.Error $"Deserialization error: {ex.Message}"
-                    | Result.Error err -> 
+                            logger.LogError(ex, "Exception handling CodeLens response")
+                            return Result.Error $"Response handling error: {ex.Message}"
+                    | Result.Error err ->
                         logger.LogError("CodeLens request failed: {Error}", err)
                         return Result.Error err
                 }
@@ -491,25 +532,76 @@ type FsAutoCompleteWrapper(config: FsAutoCompleteWrapperConfig, logger: ILogger<
             try
                 let ct = CancellationToken.None
                 let responseTask = comm.SendRequestAsync("codeLens/resolve", Some(box codeLens), ct)
-                
+
                 async {
                     let! responseResult = responseTask |> Async.AwaitTask
+
                     match responseResult with
                     | Result.Ok response ->
                         try
-                            let resolvedCodeLens = System.Text.Json.JsonSerializer.Deserialize<CodeLens>(response.Result.ToString())
-                            return Result.Ok resolvedCodeLens
+                            // Handle null/empty responses gracefully
+                            match response.Result with
+                            | None ->
+                                logger.LogWarning("CodeLens resolve returned null result")
+                                return Result.Error "CodeLens resolve returned null"
+                            | Some result ->
+                                let resultStr = result.ToString()
+                                logger.LogDebug("CodeLens resolve raw response: {Response}", resultStr)
+
+                                // Handle empty string or "null" responses
+                                if String.IsNullOrWhiteSpace(resultStr) || resultStr = "null" then
+                                    logger.LogWarning("CodeLens resolve returned empty/null string")
+                                    return Result.Error "CodeLens resolve returned empty response"
+                                else
+                                    let resolvedCodeLens =
+                                        System.Text.Json.JsonSerializer.Deserialize<CodeLens>(resultStr)
+                                    return Result.Ok resolvedCodeLens
                         with ex ->
                             logger.LogError(ex, "Failed to deserialize resolved CodeLens")
                             return Result.Error $"Deserialization error: {ex.Message}"
-                    | Result.Error err -> 
+                    | Result.Error err ->
                         logger.LogError("CodeLens resolve failed: {Error}", err)
                         return Result.Error err
                 }
             with ex ->
                 logger.LogError(ex, "Exception in ResolveCodeLens")
-                async.Return (Result.Error $"Exception: {ex.Message}")
-        | None -> async.Return (Result.Error "LSP communication not available")
+                async.Return(Result.Error $"Exception: {ex.Message}")
+        | None -> async.Return(Result.Error "LSP communication not available")
+
+    /// Send configuration to enable CodeLens
+    member private this.ConfigureCodeLensAsync(ct: CancellationToken) : Async<Result<unit, string>> =
+        async {
+            try
+                match lspCommunication with
+                | Some comm ->
+                    // Send configuration to enable CodeLens features
+                    let config =
+                        {| FSharp =
+                            {| CodeLenses =
+                                {| Signature = {| Enabled = true |}
+                                   References = {| Enabled = true |} |}
+                               EnableReferenceCodeLens = true |} |}
+
+                    let configParams = {| settings = config |}
+
+                    logger.LogDebug("Sending CodeLens configuration to FsAutoComplete")
+
+                    let notifyResult = comm.SendNotification("workspace/didChangeConfiguration", Some(box configParams))
+
+                    match notifyResult with
+                    | Result.Ok() ->
+                        logger.LogDebug("CodeLens configuration sent successfully")
+                        return Result.Ok()
+                    | Result.Error err ->
+                        logger.LogWarning("Failed to send CodeLens configuration: {Error}", err)
+                        return Result.Error err
+                | None ->
+                    return Result.Error "LSP communication not initialized"
+            with
+            | ex ->
+                logger.LogError(ex, "Exception while configuring CodeLens")
+                return Result.Error ex.Message
+        }
 
     interface IDisposable with
         member this.Dispose() =

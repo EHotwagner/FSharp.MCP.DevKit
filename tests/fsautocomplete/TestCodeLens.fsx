@@ -26,7 +26,7 @@ let createCalculator name version = { Name = name; Version = version }
 let calculator = createCalculator "Basic" "1.0"
 let result1 = calculator.Add(5, 3)
 let result2 = calculator.Multiply(4, 6)
-let result3 = addNumbers 10 20
+let result3: int = addNumbers 10 20
 
 // This interface should show implementations
 type IProcessor =

@@ -10,10 +10,16 @@
       ],
       "cwd": "c:\\Users\\ehotw\\Documents\\GitHub\\FSharp.MCP.DevKit"
     },
+    "microsoft.docs.mcp": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    },
     "kagi": {
       "type": "stdio",
       "command": "uvx",
-      "args": ["kagimcp"],
+      "args": [
+        "kagimcp"
+      ],
       "env": {
         "KAGI_API_KEY": "OqbAh-Pu3rShs2dx5j13nolb--ZzUY6CAay-ea5K2II.RT4jspD9IGzLzFfxVMBpJC2i1gq2omTSpLFSaRCr2Zw",
         "KAGI_SUMMARIZER_ENGINE": "cecil"

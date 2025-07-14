@@ -128,6 +128,30 @@ This project has been developed with significant reliance on AI-driven tools. Wh
   - *Powered by*: `InsertCode` validation + `PreviewCodeInjection` - Provides contextual analysis for safe code insertion
   - *How it works*: Analyzes insertion context to prevent breaking multi-line constructs (type definitions, unions, records) and validates combined code after insertion
 
+### 🔧 [F# Language Server Integration](docs/projects/FsAutoComplete/)
+
+- **Project**: [`FSharp.MCP.DevKit.FsAutoComplete`](./src/FSharp.MCP.DevKit.FsAutoComplete/)
+- **✅ Implementation Status**: All MCP tools now implemented with real FsAutoComplete integration (requires fsautocomplete binary)
+- **📡 Real-time Diagnostics**: Live F# compiler diagnostics and error detection with LSP integration
+  - *Powered by*: `FsAutoCompleteWrapper` - Direct integration with FsAutoComplete language server for real-time code intelligence
+  - *How it works*: Manages FsAutoComplete process lifecycle, handles LSP communication, provides live diagnostic feedback with position-accurate error reporting
+  - *MCP Tools*: `CheckFile`, `GetDiagnostics`, `StartFsAutoComplete`, `StopFsAutoComplete`
+
+- **💡 Code Intelligence**: Rich hover information, type signatures, and symbol definitions
+  - *Powered by*: `McpFsAutoCompleteTools` - Comprehensive code intelligence through Language Server Protocol
+  - *How it works*: Leverages FsAutoComplete's semantic analysis for hover documentation, go-to-definition, and type signature resolution
+  - *MCP Tools*: `GetDocumentation`, `GetSignature`, `GetStatus`
+
+- **🏗️ Workspace Management**: Project loading, file watching, and workspace-aware analysis
+  - *Powered by*: `WorkspaceManagement` - Full F# project and solution support with incremental updates
+  - *How it works*: Loads F# projects and solutions, monitors file changes, provides workspace-wide code intelligence and cross-project analysis
+  - *MCP Tools*: `LoadProject`, `WorkspaceLoad`, `WorkspacePeek`, `GetWorkspaceStatus`
+
+- **🔗 LSP Protocol Support**: Full Language Server Protocol implementation for F# development
+  - *Powered by*: `LspCommunication` + `LspTypes` - Complete LSP message handling with type-safe protocol implementation
+  - *How it works*: Implements LSP client/server communication, handles all LSP message types, provides robust error handling and recovery
+  - *Features*: Unified type system, JSON serialization, protocol compliance, concurrent message processing
+
 ## 🚀 Usage Examples
 
 ### Documentation Generation
@@ -164,6 +188,24 @@ InsertCode "let newFunction x = x * 2" "MyScript.fsx" 10 1 true true
 
 // Preview changes first
 PreviewCodeInjection "let helper = ..." "MyScript.fsx" 15
+```
+
+### F# Language Server
+
+```fsharp
+// Start FsAutoComplete language server
+StartFsAutoComplete "./workspace/path"
+
+// Get real-time diagnostics for F# files
+CheckFile "./MyScript.fs"
+
+// Get hover documentation and type signatures
+GetDocumentation "./MyScript.fs" 15 25
+GetSignature "./MyScript.fs" 20 30
+
+// Load F# projects for workspace analysis
+LoadProject "./MyProject.fsproj"
+WorkspacePeek "./solution" 2
 ```
 
 ## 🤖 Agent Development Strategies
