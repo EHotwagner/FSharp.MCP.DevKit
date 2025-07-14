@@ -302,3 +302,29 @@ module LspTypes =
         | SingleLocation of Location
         | MultipleLocations of Location[]
         | LocationLinks of LocationLink[]
+
+    /// CodeLens represents a command that should be shown along with source text
+    type CodeLens =
+        { Range: Range
+          Command: Command option
+          Data: obj option }
+
+    /// CodeLens params for requesting CodeLens
+    type CodeLensParams =
+        { TextDocument: TextDocumentIdentifier
+          WorkDoneToken: string option
+          PartialResultToken: string option }
+
+    /// CodeLens resolve params
+    type CodeLensResolveParams = CodeLens
+
+    /// CodeLens registration options
+    type CodeLensRegistrationOptions =
+        { DocumentSelector: DocumentFilter[] option
+          ResolveProvider: bool option }
+
+    /// Document filter for registration
+    and DocumentFilter =
+        { Language: string option
+          Scheme: string option
+          Pattern: string option }

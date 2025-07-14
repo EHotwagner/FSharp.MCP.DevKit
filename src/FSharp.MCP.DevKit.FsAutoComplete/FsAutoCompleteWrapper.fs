@@ -452,6 +452,65 @@ type FsAutoCompleteWrapper(config: FsAutoCompleteWrapperConfig, logger: ILogger<
             logger.LogDebug("State changed: {OldState} -> {NewState}", oldState, newState)
             wrapperEvents.Trigger(StateChanged(oldState, newState))
 
+    /// Request CodeLens for a document
+    member this.GetCodeLens(uri: string) =
+        match lspCommunication with
+        | Some comm ->
+            let codeLensParams: CodeLensParams =
+                { TextDocument = { Uri = uri }
+                  WorkDoneToken = None
+                  PartialResultToken = None }
+
+            try
+                let ct = CancellationToken.None
+                let responseTask = comm.SendRequestAsync("textDocument/codeLens", Some(box codeLensParams), ct)
+                
+                async {
+                    let! responseResult = responseTask |> Async.AwaitTask
+                    match responseResult with
+                    | Result.Ok response ->
+                        try
+                            let codeLenses = System.Text.Json.JsonSerializer.Deserialize<CodeLens[]>(response.Result.ToString())
+                            return Result.Ok codeLenses
+                        with ex ->
+                            logger.LogError(ex, "Failed to deserialize CodeLens response")
+                            return Result.Error $"Deserialization error: {ex.Message}"
+                    | Result.Error err -> 
+                        logger.LogError("CodeLens request failed: {Error}", err)
+                        return Result.Error err
+                }
+            with ex ->
+                logger.LogError(ex, "Exception in GetCodeLens")
+                async.Return (Result.Error $"Exception: {ex.Message}")
+        | None -> async.Return (Result.Error "LSP communication not available")
+
+    /// Resolve a CodeLens (get the command)
+    member this.ResolveCodeLens(codeLens: CodeLens) =
+        match lspCommunication with
+        | Some comm ->
+            try
+                let ct = CancellationToken.None
+                let responseTask = comm.SendRequestAsync("codeLens/resolve", Some(box codeLens), ct)
+                
+                async {
+                    let! responseResult = responseTask |> Async.AwaitTask
+                    match responseResult with
+                    | Result.Ok response ->
+                        try
+                            let resolvedCodeLens = System.Text.Json.JsonSerializer.Deserialize<CodeLens>(response.Result.ToString())
+                            return Result.Ok resolvedCodeLens
+                        with ex ->
+                            logger.LogError(ex, "Failed to deserialize resolved CodeLens")
+                            return Result.Error $"Deserialization error: {ex.Message}"
+                    | Result.Error err -> 
+                        logger.LogError("CodeLens resolve failed: {Error}", err)
+                        return Result.Error err
+                }
+            with ex ->
+                logger.LogError(ex, "Exception in ResolveCodeLens")
+                async.Return (Result.Error $"Exception: {ex.Message}")
+        | None -> async.Return (Result.Error "LSP communication not available")
+
     interface IDisposable with
         member this.Dispose() =
             if not isDisposed then
