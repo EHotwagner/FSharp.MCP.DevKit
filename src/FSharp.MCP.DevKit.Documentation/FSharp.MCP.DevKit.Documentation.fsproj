@@ -28,6 +28,7 @@
     <Compile Include="NuGet\PackageDownloader.fs" />
     <Compile Include="Core\PackageDocService.fs" />
     <Compile Include="Tools\DocGenerator.fs" />
+    <Compile Include="Tools\LibraryResearch.fs" />
     <Compile Include="Tools\ProjectAnalyzer.fs" />
     <Compile Include="Tools\DocumentationCommands.fs" />
   </ItemGroup>

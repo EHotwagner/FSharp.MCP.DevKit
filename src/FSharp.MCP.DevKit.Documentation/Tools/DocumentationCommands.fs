@@ -7,6 +7,7 @@ open System
 open System.IO
 open FSharp.MCP.DevKit.Documentation.Tools.DocGenerator
 open FSharp.MCP.DevKit.Documentation.Tools.ProjectAnalyzer
+open FSharp.MCP.DevKit.Documentation.Tools.LibraryResearch
 
 module DocumentationCommands =
 
@@ -15,6 +16,7 @@ module DocumentationCommands =
     type DocCommand =
         | GeneratePackageDoc of packageName: string * outputDir: string option * overwrite: bool
         | GenerateProjectDoc of projectPath: string * outputDir: string option * overwrite: bool
+        | ResearchLibrary of libraryName: string * outputDir: string option
         | ListCachedPackages of searchTerm: string option
         | ShowPackageInfo of packageName: string
         | ShowConfig
@@ -64,7 +66,7 @@ module DocumentationCommands =
         | Ok docResult ->
             let message = $"✅ Successfully generated documentation for '{packageName}'"
             let details = formatPackageDocStats docResult
-            Success(message, Some details)
+            CommandResult.Success(message, Some details)
         | Result.Error err -> Error $"❌ Failed to generate documentation for '{packageName}': {err}"
 
     // Helper function to handle project documentation result
@@ -79,7 +81,7 @@ module DocumentationCommands =
             let message =
                 $"✅ Successfully generated documentation for project '{projectResult.ProjectInfo.ProjectName}'"
 
-            Success(message, Some summary)
+            CommandResult.Success(message, Some summary)
         | Result.Error err -> Error $"❌ Failed to generate documentation for project '{projectPath}': {err}"
 
     let generatePackageDocumentation
@@ -117,7 +119,7 @@ module DocumentationCommands =
                 let searchText =
                     searchTerm |> Option.map (fun s -> $" matching '{s}'") |> Option.defaultValue ""
 
-                Info($"No packages found{searchText} in local NuGet cache", "")
+                CommandResult.Info($"No packages found{searchText} in local NuGet cache", "")
             else
                 let packageList =
                     packages
@@ -136,7 +138,7 @@ module DocumentationCommands =
                     | Some term -> $"Found {packages.Length} packages matching '{term}'"
                     | None -> $"Found {packages.Length} packages in local cache"
 
-                Info(message, packageList)
+                CommandResult.Info(message, packageList)
 
         with ex ->
             Error $"❌ Error listing packages: {ex.Message}"
@@ -169,7 +171,7 @@ module DocumentationCommands =
                         |> String.concat "\n"
                         |> fun list -> $"\nAssemblies:\n{list}"
 
-                Info($"Package information for '{packageName}'", info + assemblyList)
+                CommandResult.Info($"Package information for '{packageName}'", info + assemblyList)
 
         with ex ->
             Error $"❌ Error getting package info: {ex.Message}"
@@ -187,7 +189,43 @@ module DocumentationCommands =
 📄 Markdown Format: {globalConfig.MarkdownFormat}
 🗃️  NuGet Cache: {getGlobalNuGetCachePath ()}"""
 
-        Info("Current configuration", configInfo)
+        CommandResult.Info("Current configuration", configInfo)
+
+    // === LIBRARY RESEARCH COMMANDS ===
+
+    /// Research a library and generate overview documentation
+    let researchLibrary (libraryName: string) (outputDir: string option) : CommandResult =
+
+        try
+            let actualOutputDir = outputDir |> Option.defaultValue globalConfig.OutputDirectory
+
+            match LibraryResearch.generateLibraryOverview libraryName actualOutputDir None with
+            | Result.Ok filePath ->
+                let message = sprintf "✅ Successfully researched and documented '%s'" libraryName
+
+                let details =
+                    sprintf
+                        """📁 Overview file: %s
+    📊 Research Summary:
+      - Generated comprehensive library overview
+      - Included example usage patterns  
+      - Added namespace tree template
+      - Provided quick reference links
+      - Created AI agent usage guide
+
+    💡 Next Steps:
+      - Use 'docGen "%s"' for detailed API documentation
+      - Use search tools to find specific methods
+      - Reference the official documentation links"""
+                        filePath
+                        libraryName
+
+                CommandResult.Success(message, Some details)
+
+            | Result.Error err -> CommandResult.Error(sprintf "❌ Research failed: %s" err)
+
+        with ex ->
+            CommandResult.Error(sprintf "❌ Unexpected error: %s" ex.Message)
 
     // === COMMAND EXECUTION ===
 
@@ -199,6 +237,8 @@ module DocumentationCommands =
         | GenerateProjectDoc(projectPath, outputDir, overwrite) ->
             generateProjectDocumentation projectPath outputDir overwrite
 
+        | ResearchLibrary(libraryName, outputDir) -> researchLibrary libraryName outputDir
+
         | ListCachedPackages searchTerm -> listCachedPackages searchTerm
 
         | ShowPackageInfo packageName -> showPackageInfo packageName
@@ -208,7 +248,7 @@ module DocumentationCommands =
         | SetOutputDir outputDir ->
             try
                 setOutputDirectory outputDir
-                Success($"✅ Output directory set to: {outputDir}", None)
+                CommandResult.Success($"✅ Output directory set to: {outputDir}", None)
             with ex ->
                 Error $"❌ Failed to set output directory: {ex.Message}"
 
@@ -226,6 +266,17 @@ module DocumentationCommands =
 
     let docGenProject (projectPath: string) : unit =
         let result = executeCommand (GenerateProjectDoc(projectPath, None, false))
+
+        match result with
+        | Success(msg, details) ->
+            printfn "%s" msg
+            details |> Option.iter (printfn "%s")
+        | Error msg -> printfn "%s" msg
+        | Info(msg, data) -> printfn "%s\n%s" msg data
+
+    /// Research and document a library overview
+    let researchLib (libraryName: string) : unit =
+        let result = executeCommand (ResearchLibrary(libraryName, None))
 
         match result with
         | Success(msg, details) ->
@@ -287,14 +338,14 @@ module DocumentationCommands =
                 match DocGenerator.searchMarkdownDocumentation searchTerm searchDir with
                 | Ok results ->
                     if results.IsEmpty then
-                        Info("No matches found", $"No matches for '{searchTerm}' in {searchDir}")
+                        CommandResult.Info("No matches found", $"No matches for '{searchTerm}' in {searchDir}")
                     else
                         let formatted = DocGenerator.formatSearchResults results
 
                         let fileCount =
                             results |> List.map (fun r -> r.FileName) |> List.distinct |> List.length
 
-                        Success($"Found {results.Length} matches in {fileCount} files", Some formatted)
+                        CommandResult.Success($"Found {results.Length} matches in {fileCount} files", Some formatted)
                 | FSharp.Core.Result.Error err -> Error $"Search failed: {err}"
         with ex ->
             Error $"Search error: {ex.Message}"
@@ -322,7 +373,7 @@ module DocumentationCommands =
                     |> Array.sort
 
                 if packageDirs.Length = 0 then
-                    Info("No documentation packages found", $"Directory {searchDir} contains no packages")
+                    CommandResult.Info("No documentation packages found", $"Directory {searchDir} contains no packages")
                 else
                     let packageList =
                         packageDirs
@@ -347,6 +398,6 @@ module DocumentationCommands =
                             $"  - {pkg} ({typeCount} types)")
                         |> String.concat "\n"
 
-                    Success($"Found {packageDirs.Length} documentation packages", Some packageList)
+                    CommandResult.Success($"Found {packageDirs.Length} documentation packages", Some packageList)
         with ex ->
             Error $"Error listing packages: {ex.Message}"

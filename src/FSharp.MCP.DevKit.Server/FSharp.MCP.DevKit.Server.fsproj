@@ -5,9 +5,24 @@
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>FSharp.MCP.DevKit.Server</RootNamespace>
     <AssemblyName>FSharp.MCP.DevKit</AssemblyName>
+    
+    <!-- .NET Tool Configuration -->
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>fsharp-mcp-server</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
+    
+    <!-- Package Metadata -->
+    <PackageId>FSharp.MCP.DevKit.Server</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <PackageDescription>F# Model Context Protocol (MCP) development server with F# Interactive, code editing, and documentation tools</PackageDescription>
+    <PackageAuthors>EHotwagner</PackageAuthors>
+    <PackageTags>fsharp;mcp;model-context-protocol;ai;llm;tools;development</PackageTags>
+    <PackageProjectUrl>https://github.com/EHotwagner/FSharp.MCP.DevKit</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryUrl>https://github.com/EHotwagner/FSharp.MCP.DevKit</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,6 +56,7 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

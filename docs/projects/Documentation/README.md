@@ -5,6 +5,7 @@
 ## Overview
 
 The Documentation project provides:
+
 - **NuGet Package Documentation**: Generate docs for any NuGet package by name
 - **Project Documentation**: Generate docs for all packages in an F# project file
 - **Assembly Analysis**: Comprehensive reflection-based analysis of .NET assemblies
@@ -17,6 +18,7 @@ The Documentation project provides:
 ## Architecture
 
 The Documentation project follows a modular architecture with:
+
 - **Core Services**: Package analysis and documentation generation
 - **XML Integration**: Complete XML documentation parsing
 - **Output Rendering**: Professional markdown generation
@@ -68,6 +70,7 @@ graph TB
 ## Key Features
 
 ### ✅ Complete Implementation
+
 1. **Enhanced Assembly Analysis** - Comprehensive reflection-based analysis with full metadata extraction
 2. **XML Documentation Integration** - Complete XML doc parsing for all .NET documentation tags
 3. **Rich Markdown Generation** - Professional API reference output with proper formatting
@@ -78,22 +81,26 @@ graph TB
 8. **Project File Analysis** - Extract and document all packages from .fsproj files
 9. **Command-Line Interface** - Global .NET tool for standalone usage
 10. **Library Interface** - Programmatic API for F# Interactive and applications
+11. **🆕 Online Library Research** - Generate comprehensive library overviews with research-based descriptions, example usage, and shallow namespace trees
 
 ## Usage
 
 ### Command-Line Tool
 
 Install the global tool:
+
 ```bash
 dotnet tool install --global FSharp.MCP.DevKit.Documentation.Tool
 ```
 
 Generate documentation for a NuGet package:
+
 ```bash
 fsharp-docgen package Newtonsoft.Json --output ./docs
 ```
 
 Generate documentation for all packages in a project:
+
 ```bash
 fsharp-docgen project MyProject.fsproj --output ./docs --overwrite
 ```
@@ -109,7 +116,39 @@ docGen "Newtonsoft.Json"
 
 // Generate docs for all packages in a project file  
 docGenProject "MyProject.fsproj"
+
+// 🆕 Research and generate library overview
+researchLib "System.Text.Json"
 ```
+
+### New Library Research Feature
+
+The `researchLib` function generates comprehensive library overviews that include:
+
+- **High-level description** based on research patterns
+- **Quick reference links** to official documentation and repositories  
+- **Shallow namespace tree** showing typical structure
+- **Example usage patterns** with common scenarios
+- **AI agent usage guide** explaining when to use overviews vs detailed docs
+- **Development workflow** recommendations
+
+**Example Usage:**
+
+```fsharp
+// Generate overview for any .NET library
+researchLib "Microsoft.Extensions.Logging"
+// Creates: ./docs/Microsoft.Extensions.Logging-Overview.md
+
+// The overview provides high-level understanding
+// Use docGen for detailed API documentation
+docGen "Microsoft.Extensions.Logging"
+```
+
+**Perfect for AI Agents:**
+
+- Start with `researchLib` for initial library discovery
+- Use `docGen` when you need specific method signatures
+- Use `searchDocumentation` to find particular APIs
 
 ## Test Results
 
@@ -155,6 +194,7 @@ docGenProject "MyProject.fsproj"
 ### Working Test Scripts
 
 The project includes several working validation scripts:
+
 - `TestMilestone6Complete.fsx` - Complete end-to-end testing
 - `TestDocGeneratorComplete.fsx` - Enhanced assembly analysis validation
 - `FinalDocGeneratorTest.fsx` - Production readiness testing
@@ -167,6 +207,7 @@ The project includes several working validation scripts:
 - **[Enhanced-Search-Documentation-Plan.md](Enhanced-Search-Documentation-Plan.md)** - **NEW** Design and roadmap for intelligent search capabilities and agent-optimized workflows
 
 The next evolution focuses on:
+
 1. **Centralized Documentation Structure** - Standardized `docs/` folder layout for all projects
 2. **Intelligent Search Tools** - Agent-optimized API discovery and contextual information extraction
 3. **Generate Once, Search Many** - Efficient workflow where documentation generation is infrequent but search is constant
@@ -176,6 +217,7 @@ The next evolution focuses on:
 This README consolidates information from the following detailed documentation files:
 
 ### Current Implementation
+
 - **[Implementation-Progress.md](Implementation-Progress.md)** - Detailed milestone tracking and implementation status
 - **[Milestone6-Complete.md](Milestone6-Complete.md)** - Final milestone completion summary
 - **[Final-Test-Results.md](Final-Test-Results.md)** - Comprehensive test results and validation
@@ -183,6 +225,7 @@ This README consolidates information from the following detailed documentation f
 - **[PackageDocService-Fix-Summary.md](PackageDocService-Fix-Summary.md)** - Service implementation details
 
 ### Planning & Architecture
+
 - **[reflection-documentation-feature-plan.md](reflection-documentation-feature-plan.md)** - Original feature planning and architecture
 - **[Enhanced-Search-Documentation-Plan.md](Enhanced-Search-Documentation-Plan.md)** - Future roadmap for agent-optimized documentation
 

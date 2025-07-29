@@ -1249,7 +1249,7 @@ module McpFsiTools =
             }
 
         [<McpServerTool>]
-        [<Description("Unified code insertion with pre-format, validation, post-format, and atomic write operations for F# files")>]
+        [<Description("Unified code insertion with pre-format, post-format, and atomic write operations for F# files. Validation is optional and disabled by default to handle large code pieces better.")>]
         static member InsertCode
             (
                 fsiService: FsiMcpService,
@@ -1259,12 +1259,13 @@ module McpFsiTools =
                 [<Description("Column position for indentation (1-based, optional - if not provided, preserves existing indentation)")>] insertAtColumn:
                     int,
                 [<Description("Whether to format the code (default: true)")>] ?shouldFormat: bool,
-                [<Description("Whether to validate the code before insertion (default: true)")>] ?shouldValidate: bool
+                [<Description("Whether to validate the code before insertion (default: false, since validation can fail with large code pieces)")>] ?shouldValidate:
+                    bool
             ) : Task<string> =
             task {
                 try
                     let shouldFormat = defaultArg shouldFormat true
-                    let shouldValidate = defaultArg shouldValidate true
+                    let shouldValidate = defaultArg shouldValidate false
                     let client = fsiService.GetClient()
 
                     // Validate file type first
@@ -1458,7 +1459,7 @@ module McpFsiTools =
                                     if shouldValidate then
                                         " (validated)"
                                     else
-                                        " (no validation)"
+                                        " (validation skipped)"
 
                                 return
                                     sprintf
