@@ -10,11 +10,15 @@ An experimental prototype of an F# development toolkit delivered via the **Model
 ## ⚠️ Disclaimer (by EHotwagner)
 
 This project has been developed with significant reliance on AI-driven tools. While it has proven to be surprisingly effective—largely by leveraging robust libraries like **F# Compiler Services** and **Fantomas**—it will contain inaccuracies or incomplete features. Especially regarding Documentation, the agent tends to insert tons of industry buzzword BS whenever you look away for a second.
+This project has been developed with significant reliance on AI-driven tools. While it has proven to be surprisingly effective—largely by leveraging robust libraries like **F# Compiler Services** and **Fantomas**—it will contain inaccuracies or incomplete features. Especially regarding Documentation, the agent tends to insert tons of industry buzzword BS whenever you look away for a second.
+
+### Please Note
 
 ### Please Note
 
 - **Code Verification**: The entire codebase and its documentation have not been manually verified for correctness or completeness. However, the core features described should be functional (as in I have seen them work at least once).
 - **Agent Stability**: The AI agent's instructions are generally initially effective, but after it deviates, restarting the agent to reset its context is recommended.
+- **DevEnvironment**: This project has been developed in VSCode with GH Copilot, mostly using Claude Sonnet 4 and a bit of Gemini 2.5 Pro for planning and design. <https://austen.info/blog/github-copilot-agent-mcp/>
 - **DevEnvironment**: This project has been developed in VSCode with GH Copilot, mostly using Claude Sonnet 4 and a bit of Gemini 2.5 Pro for planning and design. <https://austen.info/blog/github-copilot-agent-mcp/>
 - **Design**: Documentation is written somewhat with REPL-driven development in mind, allowing for interactive code generation and testing. I am currently tending towards a more script-driven development approach, which allows for structured experimentation and reproducible testing. A new, more rigorous approach, **Signature-Driven Development**, is also being considered.
   - [REPL-Driven Development](./docs/Agent-Instructions-Strategies/REPL-Driven-Default/Design.md)
@@ -24,7 +28,7 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 - REPL works with hosted FSI sessions, which in this context are not easy to configure, a bit fragile with some Input, have no nice output (only MCP-Tools output terminal and agent chat window). Letting the agent start a standard fsi process in an agent observed terminal is of course possible but cumbersome in VSCode since terminal actions need approval. This project should be neutral to the chosen approach in the future. VsCode Insiders has <https://github.com/microsoft/vscode/issues/253103> which changes the ergonomics a lot. Needs consideration.
 - **Get Started**: There are no releases yet. For VSCode use this <https://devblogs.microsoft.com/dotnet/build-a-model-context-protocol-mcp-server-in-csharp/> approach. Add the project to the mcp.json file. Later a dotnet tool might be the best way to distribute this project.
 
-## ✨ Key Features
+## ✨ Features
 
 ### 🔧 F# Interactive Integration
 
@@ -54,8 +58,19 @@ This project has been developed with significant reliance on AI-driven tools. Wh
 ### 🧠 Advanced Analysis Tools
 
 - **🔍 Symbol Detection**: Advanced symbol detection and resolution
+  - *Powered by*: `SmartSymbolDetectionService` - Uses F# Compiler Services to identify and resolve symbols, functions, types, and modules within F# code
+  - *How it works*: Parses source code into AST, performs semantic analysis to resolve symbol bindings, their scope, and provides position-sensitive symbol lookup
+  - *MCP Tools*: `GetAllSymbols`, `GetSymbolAtPosition`, `WhatIsAtPosition`, `GetSymbolSignatureAtPosition`
+
 - **📊 Syntax Validation**: Comprehensive F# syntax analysis and error reporting
+  - *Powered by*: `ParseAndCheckFSharpCode` - Validates F# syntax and performs type checking with detailed diagnostics
+  - *How it works*: Uses F# Compiler Services via IPC to parse source code, check for syntax errors, type mismatches, and compiler warnings with line-level error locations
+
 - **🗂️ Dependency Analysis**: Track and analyze code dependencies and relationships
+  - *Powered by*: `AnalyzeCodeStructure` - Provides basic file analysis including line count, character count, and diagnostic summaries
+  - *How it works*: Performs F# Compiler Services parsing to identify errors, warnings, and structural issues in F# files
+  - *Current scope*: File-level analysis rather than deep dependency graph analysis
+
 - **🎯 Position-Sensitive Analysis**: Context-aware code analysis based on cursor position
 
 ## 🏗️ Architecture
@@ -260,6 +275,7 @@ The server provides **30+ specialized MCP tools** organized into categories:
 
 ### Documentation Generation
 
+
 ```bash
 # Generate documentation for a NuGet package
 GeneratePackageDocumentation "System.Text.Json" "./docs" true
@@ -273,6 +289,7 @@ ListCachedPackages "System"
 
 ### Code Execution
 
+
 ```fsharp
 // Execute F# code
 ExecuteFSharpCode "let x = 1 + 2; printfn \"Result: %d\" x"
@@ -285,6 +302,7 @@ ReferenceNuGetPackage "FSharp.Data"
 ```
 
 ### Safe Code Insertion
+
 
 ```fsharp
 // Insert code with formatting, validation disabled by default for performance
@@ -307,7 +325,9 @@ The toolkit supports multiple development philosophies, each optimized for diffe
 
 #### 🎯 [Script-Driven Development](docs/Agent-Instructions-Strategies/Script-Driven-Default/)
 
+
 **Recommended for: Production workflows, complex validation, agent-driven development**
+
 
 - **[📖 Design Philosophy](docs/Agent-Instructions-Strategies/Script-Driven-Default/Design.md)** - Comprehensive guide to script-based development methodology
 - **[🛠️ Copilot Instructions](docs/Agent-Instructions-Strategies/Script-Driven-Default/copilot-instructions.md)** - Detailed agent instructions for script-driven workflows
@@ -315,13 +335,16 @@ The toolkit supports multiple development philosophies, each optimized for diffe
 
 #### 🔄 [REPL-Driven Development](docs/Agent-Instructions-Strategies/REPL-Driven-Default/)
 
+
 **Recommended for: Exploration, prototyping, interactive development**
+
 
 - **[📖 Design Philosophy](docs/Agent-Instructions-Strategies/REPL-Driven-Default/Design.md)** - Deep dive into REPL-based development patterns
 - **[🛠️ Copilot Instructions](docs/Agent-Instructions-Strategies/REPL-Driven-Default/copilot-instructions.md)** - Agent guidance for interactive REPL workflows
 - **Key Characteristics**: Immediate feedback, live debugging, exploratory programming, state preservation
 
 #### 📜 [Signature-Driven Development](docs/Agent-Instructions-Strategies/Signature-Driven-Default/)
+
 
 **Recommended for: Contract-first development, rigorous validation, clear interfaces**
 

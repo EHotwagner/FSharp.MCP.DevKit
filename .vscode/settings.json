@@ -62,6 +62,4 @@
     "Provide clear explanations for design decisions",
     "Follow the project's established patterns and conventions"
   ],
-  // MCP configuration
-  "chat.mcp.enabled": true
 }

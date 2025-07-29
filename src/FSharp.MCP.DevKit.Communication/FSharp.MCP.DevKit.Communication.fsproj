@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>FSharp.MCP.DevKit.Communication</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
