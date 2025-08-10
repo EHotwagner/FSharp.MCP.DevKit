@@ -9,6 +9,8 @@ An experimental prototype of an F# development toolkit delivered via the **Model
 
 ## ⚠️ Disclaimer (by EHotwagner)
 
+The project is on hold for the moment since everything is moving very fast and it makes sense to wait for things to settle down a bit and see what makes sense then. Just this july update https://code.visualstudio.com/updates/v1_103 brought tons of new features that might change the workflow considerably. 
+
 This project has been developed with significant reliance on AI-driven tools. While it has proven to be surprisingly effective—largely by leveraging robust libraries like **F# Compiler Services** and **Fantomas**—it will contain inaccuracies or incomplete features. Especially regarding Documentation, the agent tends to insert tons of industry buzzword BS whenever you look away for a second.
 This project has been developed with significant reliance on AI-driven tools. While it has proven to be surprisingly effective—largely by leveraging robust libraries like **F# Compiler Services** and **Fantomas**—it will contain inaccuracies or incomplete features. Especially regarding Documentation, the agent tends to insert tons of industry buzzword BS whenever you look away for a second.
 
